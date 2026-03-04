@@ -1,140 +1,215 @@
 {{--
 ==========================================================================
-HALAMAN LOGIN
+HALAMAN LOGIN - RasaPelajar
 ==========================================================================
-Halaman ini digunakan untuk autentikasi pengguna (admin dan siswa).
-Menggunakan form yang mengirim email dan password ke AuthController@login.
+Halaman login dengan tampilan modern dan fitur lengkap.
 
-PENJELASAN
-----------
-Form ini menggunakan:
-- @csrf: Token keamanan untuk mencegah CSRF attack
-- @error: Directive untuk menampilkan pesan error validasi
-- old('email'): Menampilkan kembali value sebelumnya jika validasi gagal
+FITUR:
+- Show/hide password toggle
+- Remember me checkbox
+- Demo account quick fill
+- Responsive design
+- Animated background
 ==========================================================================
 --}}
 
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RasaPelajar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+            animation-delay: 4s;
+        }
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    {{-- Animated Background --}}
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500"></div>
+        <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div class="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+    </div>
 
-@section('title', 'Login')
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" x-data="loginForm()">
+        <div class="max-w-md w-full space-y-8">
+            {{-- Card Login --}}
+            <div class="glass rounded-3xl shadow-2xl p-8 sm:p-10">
+                {{-- Header --}}
+                <div class="text-center mb-8">
+                    <a href="{{ route('landing') }}" class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg transform hover:scale-105 transition duration-300">
+                        <span class="text-4xl">🍽️</span>
+                    </a>
+                    <h2 class="mt-6 text-3xl font-extrabold text-gray-900">Selamat Datang!</h2>
+                    <p class="mt-2 text-gray-600">Masuk ke akun <span class="text-indigo-600 font-semibold">RasaPelajar</span></p>
+                </div>
 
-@section('content')
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full">
-        {{-- Card Login --}}
-        <div class="bg-white rounded-2xl shadow-xl p-8">
-            {{-- Header --}}
-            <div class="text-center mb-8">
-                <a href="{{ route('landing') }}" class="inline-block">
-                    <span class="text-5xl">🍽️</span>
-                </a>
-                <h2 class="mt-4 text-3xl font-bold text-gray-900">Selamat Datang!</h2>
-                <p class="mt-2 text-gray-600">Masuk ke akun RasaPelajar</p>
+                {{-- Alert Success --}}
+                @if(session('success'))
+                    <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg" x-data="{ show: true }" x-show="show" x-transition>
+                        <div class="flex items-center">
+                            <span class="text-green-500 mr-3">✓</span>
+                            <p class="text-green-700 text-sm">{{ session('success') }}</p>
+                            <button @click="show = false" class="ml-auto text-green-500 hover:text-green-700">&times;</button>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Alert Error --}}
+                @if(session('error'))
+                    <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg" x-data="{ show: true }" x-show="show" x-transition>
+                        <div class="flex items-center">
+                            <span class="text-red-500 mr-3">✕</span>
+                            <p class="text-red-700 text-sm">{{ session('error') }}</p>
+                            <button @click="show = false" class="ml-auto text-red-500 hover:text-red-700">&times;</button>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Form Login --}}
+                <form action="{{ route('login') }}" method="POST" class="space-y-6" @submit="loading = true">
+                    @csrf
+
+                    {{-- Input Email --}}
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                            📧 Email
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="email" 
+                                name="email" 
+                                id="email"
+                                x-model="email"
+                                value="{{ old('email') }}"
+                                class="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition duration-200 @error('email') border-red-500 bg-red-50 @enderror"
+                                placeholder="email@sekolah.com"
+                                required
+                                autofocus
+                            >
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                                <template x-if="email && email.includes('@')">
+                                    <span class="text-green-500">✓</span>
+                                </template>
+                            </div>
+                        </div>
+                        @error('email')
+                            <p class="mt-2 text-sm text-red-600 flex items-center">
+                                <span class="mr-1">⚠</span> {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    {{-- Input Password --}}
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                            🔒 Password
+                        </label>
+                        <div class="relative">
+                            <input 
+                                :type="showPassword ? 'text' : 'password'" 
+                                name="password" 
+                                id="password"
+                                x-model="password"
+                                class="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition duration-200 pr-12 @error('password') border-red-500 bg-red-50 @enderror"
+                                placeholder="••••••••"
+                                required
+                            >
+                            <button 
+                                type="button" 
+                                @click="showPassword = !showPassword"
+                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 hover:text-indigo-600 transition"
+                            >
+                                <span x-show="!showPassword" class="text-lg">👁️</span>
+                                <span x-show="showPassword" class="text-lg">🙈</span>
+                            </button>
+                        </div>
+                        @error('password')
+                            <p class="mt-2 text-sm text-red-600 flex items-center">
+                                <span class="mr-1">⚠</span> {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    {{-- Remember Me --}}
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center cursor-pointer group">
+                            <input type="checkbox" name="remember" class="w-5 h-5 text-indigo-600 border-2 border-gray-300 rounded focus:ring-indigo-500 transition">
+                            <span class="ml-2 text-sm text-gray-600 group-hover:text-gray-900 transition">Ingat saya</span>
+                        </label>
+                    </div>
+
+                    {{-- Submit Button --}}
+                    <button 
+                        type="submit"
+                        :disabled="loading"
+                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 focus:ring-4 focus:ring-indigo-300 transition duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+                    >
+                        <template x-if="!loading">
+                            <span class="flex items-center">
+                                <span class="mr-2">🚀</span> Masuk Sekarang
+                            </span>
+                        </template>
+                        <template x-if="loading">
+                            <span class="flex items-center">
+                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Memproses...
+                            </span>
+                        </template>
+                    </button>
+                </form>
+
+                {{-- Link ke Register --}}
+                <p class="mt-8 text-center text-gray-600">
+                    Belum punya akun?
+                    <a href="{{ route('register') }}" class="text-indigo-600 font-bold hover:text-indigo-500 hover:underline transition">
+                        Daftar sekarang →
+                    </a>
+                </p>
             </div>
 
-            {{-- Alert Error --}}
-            @if(session('error'))
-                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            {{-- Form Login --}}
-            <form action="{{ route('login') }}" method="POST" class="space-y-6">
-                {{-- 
-                CSRF Token
-                ----------
-                Token ini wajib ada di setiap form POST untuk keamanan.
-                Laravel akan menolak request jika token tidak valid.
-                --}}
-                @csrf
-
-                {{-- Input Email --}}
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                        Email
-                    </label>
-                    <input 
-                        type="email" 
-                        name="email" 
-                        id="email"
-                        value="{{ old('email') }}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('email') border-red-500 @enderror"
-                        placeholder="email@sekolah.com"
-                        required
-                        autofocus
-                    >
-                    {{-- 
-                    Error Message
-                    -------------
-                    @error directive akan menampilkan pesan error jika field email
-                    tidak lolos validasi di controller
-                    --}}
-                    @error('email')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Input Password --}}
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                        Password
-                    </label>
-                    <input 
-                        type="password" 
-                        name="password" 
-                        id="password"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('password') border-red-500 @enderror"
-                        placeholder="••••••••"
-                        required
-                    >
-                    @error('password')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Remember Me --}}
-                <div class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" name="remember" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                        <span class="ml-2 text-sm text-gray-600">Ingat saya</span>
-                    </label>
-                </div>
-
-                {{-- Submit Button --}}
-                <button 
-                    type="submit"
-                    class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
-                >
-                    Masuk
-                </button>
-            </form>
-
-            {{-- Link ke Register --}}
-            <p class="mt-6 text-center text-gray-600">
-                Belum punya akun?
-                <a href="{{ route('register') }}" class="text-indigo-600 font-semibold hover:text-indigo-500">
-                    Daftar sekarang
+            {{-- Back to Home --}}
+            <p class="text-center">
+                <a href="{{ route('landing') }}" class="inline-flex items-center text-white/90 hover:text-white font-medium transition">
+                    <span class="mr-2">←</span> Kembali ke Beranda
                 </a>
             </p>
-
-            {{-- Demo Account Info --}}
-            <div class="mt-8 p-4 bg-gray-50 rounded-lg">
-                <p class="text-sm font-medium text-gray-700 mb-2">Demo Account:</p>
-                <div class="text-sm text-gray-600 space-y-1">
-                    <p><strong>Admin:</strong> admin@kantin.com</p>
-                    <p><strong>Siswa:</strong> siswa@kantin.com</p>
-                    <p><strong>Password:</strong> password</p>
-                </div>
-            </div>
         </div>
-
-        {{-- Back to Home --}}
-        <p class="mt-6 text-center">
-            <a href="{{ route('landing') }}" class="text-white hover:text-indigo-200">
-                ← Kembali ke Beranda
-            </a>
-        </p>
     </div>
-</div>
-@endsection
+
+    <script>
+        function loginForm() {
+            return {
+                email: '{{ old("email") }}',
+                password: '',
+                showPassword: false,
+                loading: false
+            }
+        }
+    </script>
+</body>
+</html>
