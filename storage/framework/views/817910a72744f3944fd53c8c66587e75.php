@@ -1,29 +1,11 @@
-{{--
-==========================================================================
-MENU KANTIN - SISWA
-==========================================================================
-Halaman ini menampilkan daftar produk yang bisa dipesan siswa.
-Menggunakan Alpine.js untuk fitur add to cart.
 
-PENJELASAN ALPINE.JS
---------------------
-x-data: Mendefinisikan reactive data dalam component
-@click: Event listener untuk click
-$store: Global store yang bisa diakses semua component
-==========================================================================
---}}
 
-@extends('layouts.app')
 
-@section('title', 'Menu Kantin')
 
-@section('content')
-{{-- 
-Alpine.js Store untuk Cart
---------------------------
-Store ini menyimpan data cart dan bisa diakses dari mana saja.
-Data disimpan di localStorage agar tidak hilang saat refresh.
---}}
+<?php $__env->startSection('title', 'Menu Kantin'); ?>
+
+<?php $__env->startSection('content'); ?>
+
 <div x-data="{
     cart: JSON.parse(localStorage.getItem('kantin_cart') || '[]'),
     showTopupModal: false,
@@ -96,11 +78,11 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
             alert('Keranjang kosong!');
             return;
         }
-        window.location.href = '{{ route('siswa.cart') }}';
+        window.location.href = '<?php echo e(route('siswa.cart')); ?>';
     }
 }" class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
 
-    {{-- Notification Toast --}}
+    
     <div x-show="showNotification" 
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 transform translate-y-2"
@@ -115,7 +97,7 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {{-- Header dengan animasi --}}
+            
             <div class="mb-10 text-center lg:text-left">
                 <h1 class="text-4xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
                     Menu Kantin
@@ -124,12 +106,12 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
             </div>
 
             <div class="flex flex-col lg:flex-row gap-8">
-                {{-- SIDEBAR SALDO VIRTUAL - POSISI KANAN --}}
+                
                 <div class="lg:w-80 order-2 lg:order-2">
                     <div class="sticky top-24 space-y-5">
-                        {{-- KARTU SALDO VIRTUAL --}}
+                        
                         <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl shadow-2xl p-6 text-white transform hover:scale-[1.02] transition-all duration-300">
-                            {{-- Background Pattern --}}
+                            
                             <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
                             <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
                             
@@ -139,22 +121,22 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
                                 </div>
                                 <div>
                                     <p class="text-white/70 text-sm font-medium">Saldo Virtual</p>
-                                    <h3 class="text-3xl font-bold tracking-tight">Rp {{ number_format(auth()->user()->saldo ?? 0, 0, ',', '.') }}</h3>
+                                    <h3 class="text-3xl font-bold tracking-tight">Rp <?php echo e(number_format(auth()->user()->saldo ?? 0, 0, ',', '.')); ?></h3>
                                 </div>
                             </div>
                             <hr class="border-white/20 my-4">
                             <div class="relative flex items-center justify-between text-sm">
                                 <div class="flex items-center bg-white/10 px-3 py-1.5 rounded-full">
                                     <i class="fas fa-user mr-2"></i>
-                                    <span class="font-medium">{{ auth()->user()->name }}</span>
+                                    <span class="font-medium"><?php echo e(auth()->user()->name); ?></span>
                                 </div>
                                 <div class="flex items-center bg-white/10 px-3 py-1.5 rounded-full">
                                     <i class="fas fa-envelope mr-2"></i>
-                                    <span class="font-medium text-xs">{{ Str::limit(auth()->user()->email, 15) }}</span>
+                                    <span class="font-medium text-xs"><?php echo e(Str::limit(auth()->user()->email, 15)); ?></span>
                                 </div>
                             </div>
                             
-                            {{-- Tombol Top Up --}}
+                            
                             <button @click="showTopupModal = true" 
                                     class="w-full mt-5 px-5 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-semibold transition-all duration-300 flex items-center justify-center group">
                                 <i class="fas fa-plus-circle mr-2 group-hover:scale-110 transition-transform"></i>
@@ -162,7 +144,7 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
                             </button>
                         </div>
                         
-                        {{-- Kartu Informasi --}}
+                        
                         <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-6 hover:shadow-xl transition-all duration-300">
                             <h4 class="font-bold text-gray-800 mb-4 flex items-center text-lg">
                                 <span class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
@@ -200,91 +182,96 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
                     </div>
                 </div>
 
-                {{-- Products Grid --}}
+                
                 <div class="flex-1 order-1 lg:order-1">
-                    {{-- Category Filter dengan design modern --}}
+                    
                     <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 mb-8 border border-white/50">
                         <div class="flex flex-wrap gap-3">
-                            <a href="{{ route('siswa.menu') }}" 
-                               class="px-5 py-2.5 rounded-xl font-medium transition-all duration-300 {{ !request('category') ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200 scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105' }}">
+                            <a href="<?php echo e(route('siswa.menu')); ?>" 
+                               class="px-5 py-2.5 rounded-xl font-medium transition-all duration-300 <?php echo e(!request('category') ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200 scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105'); ?>">
                                 <i class="fas fa-th-large mr-2"></i>Semua
                             </a>
-                            @foreach($categories as $category)
-                                @php
+                            <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php
                                     $icons = ['Makanan Berat' => 'fa-drumstick-bite', 'Makanan Ringan' => 'fa-cookie-bite', 'Minuman' => 'fa-glass-water', 'Snack' => 'fa-candy-cane'];
                                     $icon = $icons[$category->nama] ?? 'fa-utensils';
-                                @endphp
-                                <a href="{{ route('siswa.menu', ['category' => $category->id]) }}" 
-                                   class="px-5 py-2.5 rounded-xl font-medium transition-all duration-300 {{ request('category') == $category->id ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200 scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105' }}">
-                                    <i class="fas {{ $icon }} mr-2"></i>{{ $category->nama }}
+                                ?>
+                                <a href="<?php echo e(route('siswa.menu', ['category' => $category->id])); ?>" 
+                                   class="px-5 py-2.5 rounded-xl font-medium transition-all duration-300 <?php echo e(request('category') == $category->id ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200 scale-105' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105'); ?>">
+                                    <i class="fas <?php echo e($icon); ?> mr-2"></i><?php echo e($category->nama); ?>
+
                                 </a>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     </div>
 
-                    {{-- Products dengan card modern --}}
+                    
                     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                        @forelse($products as $product)
+                        <?php $__empty_1 = true; $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <div class="group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
-                                {{-- Image Container --}}
+                                
                                 <div class="relative overflow-hidden">
-                                    @if($product->gambar)
-                                        <img src="{{ Storage::url($product->gambar) }}" 
-                                             alt="{{ $product->nama }}"
+                                    <?php if($product->gambar): ?>
+                                        <img src="<?php echo e(Storage::url($product->gambar)); ?>" 
+                                             alt="<?php echo e($product->nama); ?>"
                                              class="w-full h-52 object-cover group-hover:scale-110 transition-transform duration-500">
-                                    @else
+                                    <?php else: ?>
                                         <div class="w-full h-52 bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 flex items-center justify-center">
                                             <span class="text-7xl group-hover:scale-125 transition-transform duration-500">🍽️</span>
                                         </div>
-                                    @endif
-                                    {{-- Overlay gradient --}}
+                                    <?php endif; ?>
+                                    
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                    {{-- Category Badge --}}
+                                    
                                     <div class="absolute top-3 left-3">
                                         <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-white/90 backdrop-blur-sm text-indigo-700 shadow-lg">
-                                            <i class="fas fa-tag mr-1.5"></i>{{ $product->category->nama }}
+                                            <i class="fas fa-tag mr-1.5"></i><?php echo e($product->category->nama); ?>
+
                                         </span>
                                     </div>
-                                    {{-- Stock Badge --}}
+                                    
                                     <div class="absolute top-3 right-3">
-                                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold {{ $product->stok > 10 ? 'bg-green-500' : ($product->stok > 0 ? 'bg-amber-500' : 'bg-red-500') }} text-white shadow-lg">
-                                            <i class="fas {{ $product->stok > 0 ? 'fa-check-circle' : 'fa-times-circle' }} mr-1.5"></i>
-                                            {{ $product->stok > 0 ? "Stok: {$product->stok}" : 'Habis' }}
+                                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold <?php echo e($product->stok > 10 ? 'bg-green-500' : ($product->stok > 0 ? 'bg-amber-500' : 'bg-red-500')); ?> text-white shadow-lg">
+                                            <i class="fas <?php echo e($product->stok > 0 ? 'fa-check-circle' : 'fa-times-circle'); ?> mr-1.5"></i>
+                                            <?php echo e($product->stok > 0 ? "Stok: {$product->stok}" : 'Habis'); ?>
+
                                         </span>
                                     </div>
                                 </div>
                                 
-                                {{-- Content --}}
+                                
                                 <div class="p-5">
-                                    <h3 class="font-bold text-gray-800 text-lg mb-2 group-hover:text-indigo-600 transition-colors">{{ $product->nama }}</h3>
+                                    <h3 class="font-bold text-gray-800 text-lg mb-2 group-hover:text-indigo-600 transition-colors"><?php echo e($product->nama); ?></h3>
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="text-sm text-gray-400 line-through" style="display: none;">Rp {{ number_format($product->harga * 1.1, 0, ',', '.') }}</p>
+                                            <p class="text-sm text-gray-400 line-through" style="display: none;">Rp <?php echo e(number_format($product->harga * 1.1, 0, ',', '.')); ?></p>
                                             <p class="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                                                Rp {{ number_format($product->harga, 0, ',', '.') }}
+                                                Rp <?php echo e(number_format($product->harga, 0, ',', '.')); ?>
+
                                             </p>
                                         </div>
-                                        @if($product->stok > 0)
+                                        <?php if($product->stok > 0): ?>
                                             <button 
                                                 @click="addToCart({
-                                                    id: {{ $product->id }},
-                                                    nama: {{ json_encode($product->nama) }},
-                                                    harga: {{ $product->harga }},
-                                                    stok: {{ $product->stok }}
+                                                    id: <?php echo e($product->id); ?>,
+                                                    nama: <?php echo e(json_encode($product->nama)); ?>,
+                                                    harga: <?php echo e($product->harga); ?>,
+                                                    stok: <?php echo e($product->stok); ?>
+
                                                 })"
                                                 class="relative inline-flex items-center px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg hover:shadow-indigo-300 transform hover:scale-105 active:scale-95 transition-all duration-300">
                                                 <i class="fas fa-plus mr-2"></i>
                                                 Pesan
                                             </button>
-                                        @else
+                                        <?php else: ?>
                                             <button disabled class="px-5 py-3 bg-gray-200 text-gray-400 rounded-xl font-semibold cursor-not-allowed">
                                                 <i class="fas fa-ban mr-2"></i>Habis
                                             </button>
-                                        @endif
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <div class="col-span-full">
                                 <div class="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg">
                                     <span class="text-8xl mb-4 block">🍽️</span>
@@ -292,23 +279,24 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
                                     <p class="text-gray-500">Tunggu update menu terbaru dari kantin ya!</p>
                                 </div>
                             </div>
-                        @endforelse
+                        <?php endif; ?>
                     </div>
 
-                    {{-- Pagination Modern --}}
-                    @if($products->hasPages())
+                    
+                    <?php if($products->hasPages()): ?>
                         <div class="mt-10 flex justify-center">
                             <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 border border-white/50">
-                                {{ $products->withQueryString()->links() }}
+                                <?php echo e($products->withQueryString()->links()); ?>
+
                             </div>
                         </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Modal Top Up Saldo --}}
+    
     <div x-show="showTopupModal" 
          x-cloak
          class="fixed inset-0 z-50 overflow-y-auto"
@@ -318,10 +306,10 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0">
-        {{-- Backdrop --}}
+        
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="showTopupModal = false"></div>
         
-        {{-- Modal Content --}}
+        
         <div class="relative min-h-screen flex items-center justify-center p-4">
             <div class="relative bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden"
                  x-transition:enter="transition ease-out duration-300"
@@ -332,7 +320,7 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
                  x-transition:leave-end="opacity-0 scale-95 translate-y-4"
                  @click.away="showTopupModal = false">
                 
-                {{-- Header --}}
+                
                 <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-6 py-5 text-white">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
@@ -350,17 +338,17 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
                     </div>
                 </div>
                 
-                {{-- Body --}}
-                <form action="{{ route('siswa.saldo.topup') }}" method="POST" class="p-6">
-                    @csrf
+                
+                <form action="<?php echo e(route('siswa.saldo.topup')); ?>" method="POST" class="p-6">
+                    <?php echo csrf_field(); ?>
                     
-                    {{-- Current Balance --}}
+                    
                     <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 mb-6">
                         <p class="text-gray-500 text-sm mb-1">Saldo Saat Ini</p>
-                        <p class="text-2xl font-bold text-gray-800">Rp {{ number_format(auth()->user()->saldo ?? 0, 0, ',', '.') }}</p>
+                        <p class="text-2xl font-bold text-gray-800">Rp <?php echo e(number_format(auth()->user()->saldo ?? 0, 0, ',', '.')); ?></p>
                     </div>
                     
-                    {{-- Preset Amount Buttons --}}
+                    
                     <div class="mb-5">
                         <label class="block text-gray-700 font-medium mb-3">Pilih Nominal</label>
                         <div class="grid grid-cols-2 gap-3">
@@ -375,7 +363,7 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
                         </div>
                     </div>
                     
-                    {{-- Custom Amount Input --}}
+                    
                     <div class="mb-6">
                         <label class="block text-gray-700 font-medium mb-2">Atau Masukkan Nominal Lain</label>
                         <div class="relative">
@@ -392,7 +380,7 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
                         <p class="text-gray-400 text-xs mt-2">Minimal Rp 10.000 - Maksimal Rp 1.000.000</p>
                     </div>
                     
-                    {{-- Info Box --}}
+                    
                     <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
                         <div class="flex items-start">
                             <i class="fas fa-info-circle text-amber-500 mt-0.5 mr-3"></i>
@@ -407,7 +395,7 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
                         </div>
                     </div>
                     
-                    {{-- Submit Button --}}
+                    
                     <button type="submit" 
                             :disabled="!topupAmount || topupAmount < 10000"
                             :class="(!topupAmount || topupAmount < 10000) ? 'bg-gray-300 cursor-not-allowed' : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl'"
@@ -420,7 +408,7 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
         </div>
     </div>
 
-    {{-- Floating Cart Button --}}
+    
     <div x-show="cart.length > 0" 
          x-transition
          class="fixed bottom-6 right-6 z-40">
@@ -438,4 +426,6 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
         </button>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\laragon\www\kantin-modern\resources\views/siswa/menu.blade.php ENDPATH**/ ?>

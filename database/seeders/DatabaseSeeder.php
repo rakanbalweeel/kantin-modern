@@ -74,6 +74,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'budi@siswa.com',
             'password' => 'password',
             'role' => 'siswa',
+            'saldo' => 150000, // Saldo awal Rp 150.000
         ]);
         
         // Siswa Demo 2
@@ -82,6 +83,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'siti@siswa.com',
             'password' => 'password',
             'role' => 'siswa',
+            'saldo' => 75000, // Saldo awal Rp 75.000
         ]);
         
         // Siswa Demo 3
@@ -90,6 +92,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'ahmad@siswa.com',
             'password' => 'password',
             'role' => 'siswa',
+            'saldo' => 200000, // Saldo awal Rp 200.000
         ]);
         
         $this->command->info('✅ Users berhasil dibuat: 1 Admin, 3 Siswa');

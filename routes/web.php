@@ -51,6 +51,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SaldoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -118,6 +119,11 @@ Route::middleware('auth')->group(function () {
             
             // Laporan Penjualan
             Route::get('/reports/sales', [AdminController::class, 'salesReport'])->name('reports.sales');
+            
+            // Saldo Management (Admin)
+            Route::get('/saldo', [SaldoController::class, 'adminIndex'])->name('saldo.index');
+            Route::patch('/saldo/{id}/approve', [SaldoController::class, 'approve'])->name('saldo.approve');
+            Route::patch('/saldo/{id}/reject', [SaldoController::class, 'reject'])->name('saldo.reject');
         });
     
     /*
@@ -144,5 +150,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/orders/history', [OrderController::class, 'history'])->name('orders.index');
             Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
             Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+            
+            // Saldo
+            Route::get('/saldo', [SaldoController::class, 'index'])->name('saldo.index');
+            Route::post('/saldo/topup', [SaldoController::class, 'requestTopup'])->name('saldo.topup');
         });
 });
