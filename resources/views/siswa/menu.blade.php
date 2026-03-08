@@ -225,6 +225,25 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
                     {{-- Products dengan card modern --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                         @forelse($products as $product)
+                            @php
+                                // Tentukan emoji/icon berdasarkan kategori
+                                $categoryEmojis = [
+                                    'Makanan Berat' => '🍛',
+                                    'Makanan Ringan' => '🍿',
+                                    'Minuman' => '🥤',
+                                    'Snack' => '🍪',
+                                ];
+                                $defaultEmoji = $categoryEmojis[$product->category->nama] ?? '🍽️';
+                                
+                                // Tentukan gradient berdasarkan kategori
+                                $gradients = [
+                                    'Makanan Berat' => 'from-orange-100 via-amber-50 to-yellow-100',
+                                    'Makanan Ringan' => 'from-green-100 via-emerald-50 to-teal-100',
+                                    'Minuman' => 'from-blue-100 via-cyan-50 to-sky-100',
+                                    'Snack' => 'from-pink-100 via-rose-50 to-red-100',
+                                ];
+                                $defaultGradient = $gradients[$product->category->nama] ?? 'from-indigo-100 via-purple-50 to-pink-100';
+                            @endphp
                             <div class="group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
                                 {{-- Image Container --}}
                                 <div class="relative overflow-hidden">
@@ -233,8 +252,11 @@ Data disimpan di localStorage agar tidak hilang saat refresh.
                                              alt="{{ $product->nama }}"
                                              class="w-full h-52 object-cover group-hover:scale-110 transition-transform duration-500">
                                     @else
-                                        <div class="w-full h-52 bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 flex items-center justify-center">
-                                            <span class="text-7xl group-hover:scale-125 transition-transform duration-500">🍽️</span>
+                                        <div class="w-full h-52 bg-gradient-to-br {{ $defaultGradient }} flex items-center justify-center relative overflow-hidden">
+                                            {{-- Decorative circles --}}
+                                            <div class="absolute top-0 right-0 w-24 h-24 bg-white/30 rounded-full -mr-12 -mt-12"></div>
+                                            <div class="absolute bottom-0 left-0 w-32 h-32 bg-white/20 rounded-full -ml-16 -mb-16"></div>
+                                            <span class="text-7xl group-hover:scale-125 transition-transform duration-500 drop-shadow-lg">{{ $defaultEmoji }}</span>
                                         </div>
                                     @endif
                                     {{-- Overlay gradient --}}

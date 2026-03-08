@@ -24,11 +24,14 @@ PENJELASAN FORM
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Back Button + Header --}}
         <div class="mb-6">
-            <a href="{{ route('admin.products.index') }}" class="inline-flex items-center text-gray-600 hover:text-gray-900">
-                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Kembali
+            <a href="{{ route('admin.products.index') }}" 
+               class="group inline-flex items-center text-gray-500 hover:text-indigo-600 transition-all duration-300">
+                <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-md border border-gray-100 mr-3 group-hover:shadow-lg group-hover:border-indigo-200 group-hover:-translate-x-1 transition-all duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </span>
+                <span class="font-medium">Kembali</span>
             </a>
             <h1 class="mt-4 text-2xl font-bold text-gray-900">Tambah Produk Baru</h1>
             <p class="mt-1 text-gray-600">Tambahkan menu makanan atau minuman baru</p>
@@ -164,28 +167,60 @@ PENJELASAN FORM
                     @enderror
                 </div>
 
-                {{-- Upload Gambar --}}
-                <div class="mb-6">
+                {{-- Upload Gambar dengan Preview --}}
+                <div class="mb-6" x-data="imageUpload()">
                     <label for="gambar" class="block text-sm font-medium text-gray-700 mb-2">
                         Gambar Produk
                     </label>
-                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-indigo-400 transition">
-                        <div class="space-y-1 text-center">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    
+                    {{-- Preview Container --}}
+                    <div x-show="imagePreview" class="mb-4 relative inline-block">
+                        <img :src="imagePreview" class="w-40 h-40 object-cover rounded-xl shadow-lg border-4 border-white">
+                        <button type="button" 
+                                @click="removeImage()" 
+                                class="absolute -top-2 -right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
-                            <div class="flex text-sm text-gray-600">
-                                <label for="gambar" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500">
-                                    <span>Upload gambar</span>
-                                    <input id="gambar" name="gambar" type="file" class="sr-only" accept="image/*">
-                                </label>
-                                <p class="pl-1">atau drag and drop</p>
+                        </button>
+                        <div class="mt-2 text-sm text-gray-600" x-text="fileName"></div>
+                    </div>
+
+                    {{-- Upload Area --}}
+                    <div x-show="!imagePreview"
+                         class="relative mt-1 flex justify-center px-6 pt-8 pb-8 border-2 border-gray-300 border-dashed rounded-xl hover:border-indigo-400 bg-gray-50 hover:bg-indigo-50/30 transition-all duration-300 cursor-pointer"
+                         :class="{ 'border-indigo-500 bg-indigo-50': isDragging }"
+                         @dragover.prevent="isDragging = true"
+                         @dragleave.prevent="isDragging = false"
+                         @drop.prevent="handleDrop($event)"
+                         @click="$refs.fileInput.click()">
+                        <div class="space-y-3 text-center">
+                            <div class="w-16 h-16 mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
                             </div>
-                            <p class="text-xs text-gray-500">PNG, JPG, GIF max 2MB</p>
+                            <div class="text-sm text-gray-600">
+                                <span class="font-semibold text-indigo-600">Klik untuk upload</span>
+                                <span> atau drag & drop gambar</span>
+                            </div>
+                            <p class="text-xs text-gray-500">PNG, JPG, WEBP • Maksimal 2MB</p>
                         </div>
+                        <input x-ref="fileInput" 
+                               id="gambar" 
+                               name="gambar" 
+                               type="file" 
+                               class="hidden" 
+                               accept="image/jpeg,image/png,image/webp"
+                               @change="handleFileSelect($event)">
                     </div>
                     @error('gambar')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        <p class="mt-2 text-sm text-red-500 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            {{ $message }}
+                        </p>
                     @enderror
                 </div>
 
@@ -205,3 +240,46 @@ PENJELASAN FORM
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function imageUpload() {
+    return {
+        imagePreview: null,
+        fileName: '',
+        isDragging: false,
+        
+        handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) this.previewFile(file);
+        },
+        
+        handleDrop(event) {
+            this.isDragging = false;
+            const file = event.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                this.$refs.fileInput.files = event.dataTransfer.files;
+                this.previewFile(file);
+            }
+        },
+        
+        previewFile(file) {
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Ukuran file maksimal 2MB!');
+                return;
+            }
+            this.fileName = file.name;
+            const reader = new FileReader();
+            reader.onload = (e) => { this.imagePreview = e.target.result; };
+            reader.readAsDataURL(file);
+        },
+        
+        removeImage() {
+            this.imagePreview = null;
+            this.fileName = '';
+            this.$refs.fileInput.value = '';
+        }
+    }
+}
+</script>
+@endpush

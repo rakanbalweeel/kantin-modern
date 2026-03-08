@@ -255,11 +255,17 @@ FITUR:
             </div>
 
             {{-- Back to Home --}}
-            <p class="text-center">
-                <a href="{{ route('landing') }}" class="inline-flex items-center text-white/90 hover:text-white font-medium transition">
-                    <span class="mr-2">←</span> Kembali ke Beranda
+            <div class="flex justify-center">
+                <a href="{{ route('landing') }}" 
+                   class="group inline-flex items-center text-white/80 hover:text-white transition-all duration-300">
+                    <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 mr-3 group-hover:bg-white/20 group-hover:-translate-x-1 transition-all duration-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </span>
+                    <span class="font-medium">Kembali ke Beranda</span>
                 </a>
-            </p>
+            </div>
         </div>
     </div>
 

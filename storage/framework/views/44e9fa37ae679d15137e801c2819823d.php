@@ -1,25 +1,11 @@
-{{--
-==========================================================================
-FORM EDIT PRODUK (EDIT)
-==========================================================================
-Halaman ini berisi form untuk mengedit produk yang sudah ada.
-Form akan dikirim ke ProductController@update via PUT.
 
-PERBEDAAN DENGAN CREATE
------------------------
-- action: Route ke update method dengan parameter $product
-- @method('PUT'): Spoofing method karena form hanya support GET/POST
-- value pre-filled dengan data $product yang sudah ada
-- Preview gambar lama jika ada
-==========================================================================
---}}
 
-@extends('layouts.app')
 
-@section('title', 'Edit Produk')
 
-@section('content')
-@php
+<?php $__env->startSection('title', 'Edit Produk'); ?>
+
+<?php $__env->startSection('content'); ?>
+<?php
     $categoryStyles = [
         'Makanan Berat' => ['icon' => 'fa-drumstick-bite', 'gradient' => 'from-orange-500 to-red-500', 'bg' => 'from-orange-100 to-red-100'],
         'Makanan Ringan' => ['icon' => 'fa-cookie-bite', 'gradient' => 'from-green-500 to-emerald-500', 'bg' => 'from-green-100 to-emerald-100'],
@@ -27,13 +13,13 @@ PERBEDAAN DENGAN CREATE
         'Snack' => ['icon' => 'fa-candy-cane', 'gradient' => 'from-pink-500 to-rose-500', 'bg' => 'from-pink-100 to-rose-100'],
     ];
     $style = $categoryStyles[$product->category->nama] ?? ['icon' => 'fa-utensils', 'gradient' => 'from-indigo-500 to-purple-500', 'bg' => 'from-indigo-100 to-purple-100'];
-@endphp
+?>
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Back Button Modern --}}
+        
         <div class="mb-8">
-            <a href="{{ route('admin.products.index') }}" 
+            <a href="<?php echo e(route('admin.products.index')); ?>" 
                class="group inline-flex items-center text-gray-500 hover:text-indigo-600 transition-all duration-300">
                 <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-white/80 backdrop-blur-sm shadow-lg border border-white/50 mr-3 group-hover:shadow-xl group-hover:border-indigo-200 group-hover:-translate-x-1 transition-all duration-300">
                     <i class="fas fa-arrow-left"></i>
@@ -42,10 +28,10 @@ PERBEDAAN DENGAN CREATE
             </a>
         </div>
 
-        {{-- Header Card --}}
+        
         <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden mb-8">
-            <div class="bg-gradient-to-r {{ $style['gradient'] }} p-6 relative overflow-hidden">
-                {{-- Decorative circles --}}
+            <div class="bg-gradient-to-r <?php echo e($style['gradient']); ?> p-6 relative overflow-hidden">
+                
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                 <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
                 
@@ -55,41 +41,41 @@ PERBEDAAN DENGAN CREATE
                     </div>
                     <div>
                         <h1 class="text-2xl font-bold text-white">Edit Produk</h1>
-                        <p class="text-white/80 text-sm mt-1">Ubah informasi produk "{{ $product->nama }}"</p>
+                        <p class="text-white/80 text-sm mt-1">Ubah informasi produk "<?php echo e($product->nama); ?>"</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Form Card Modern --}}
+        
         <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden hover:shadow-xl transition-all duration-300">
-            <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
+            <form action="<?php echo e(route('admin.products.update', $product)); ?>" method="POST" enctype="multipart/form-data">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('PUT'); ?>
 
                 <div class="p-8">
-                    {{-- Preview Produk Saat Ini --}}
-                    <div class="mb-8 p-6 bg-gradient-to-br {{ $style['bg'] }} rounded-2xl border border-white/50">
+                    
+                    <div class="mb-8 p-6 bg-gradient-to-br <?php echo e($style['bg']); ?> rounded-2xl border border-white/50">
                         <div class="flex items-center">
-                            @if($product->gambar)
-                                <img src="{{ Storage::url($product->gambar) }}" 
-                                     alt="{{ $product->nama }}"
+                            <?php if($product->gambar): ?>
+                                <img src="<?php echo e(Storage::url($product->gambar)); ?>" 
+                                     alt="<?php echo e($product->nama); ?>"
                                      class="w-16 h-16 rounded-xl object-cover shadow-lg border-2 border-white mr-4">
-                            @else
-                                <div class="w-16 h-16 bg-gradient-to-br {{ $style['gradient'] }} rounded-2xl flex items-center justify-center shadow-lg mr-4">
-                                    <i class="fas {{ $style['icon'] }} text-white text-2xl"></i>
+                            <?php else: ?>
+                                <div class="w-16 h-16 bg-gradient-to-br <?php echo e($style['gradient']); ?> rounded-2xl flex items-center justify-center shadow-lg mr-4">
+                                    <i class="fas <?php echo e($style['icon']); ?> text-white text-2xl"></i>
                                 </div>
-                            @endif
+                            <?php endif; ?>
                             <div>
                                 <p class="text-sm text-gray-500 mb-1">Produk saat ini</p>
-                                <h3 class="text-xl font-bold text-gray-800">{{ $product->nama }}</h3>
-                                <p class="text-sm text-gray-600 mt-1 font-mono">{{ $product->kode }} • Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
+                                <h3 class="text-xl font-bold text-gray-800"><?php echo e($product->nama); ?></h3>
+                                <p class="text-sm text-gray-600 mt-1 font-mono"><?php echo e($product->kode); ?> • Rp <?php echo e(number_format($product->harga, 0, ',', '.')); ?></p>
                             </div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {{-- Kode Produk --}}
+                        
                         <div>
                             <label for="kode" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
                                 <span class="w-8 h-8 bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg flex items-center justify-center mr-2">
@@ -101,19 +87,34 @@ PERBEDAAN DENGAN CREATE
                                 type="text" 
                                 name="kode" 
                                 id="kode"
-                                value="{{ old('kode', $product->kode) }}"
-                                class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 font-mono @error('kode') border-red-400 bg-red-50 @enderror"
+                                value="<?php echo e(old('kode', $product->kode)); ?>"
+                                class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 font-mono <?php $__errorArgs = ['kode'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-400 bg-red-50 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                 required
                             >
-                            @error('kode')
+                            <?php $__errorArgs = ['kode'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <p class="mt-2 text-sm text-red-500 flex items-center">
                                     <i class="fas fa-exclamation-circle mr-2"></i>
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </p>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
-                        {{-- Nama Produk --}}
+                        
                         <div>
                             <label for="nama" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
                                 <span class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center mr-2">
@@ -125,20 +126,35 @@ PERBEDAAN DENGAN CREATE
                                 type="text" 
                                 name="nama" 
                                 id="nama"
-                                value="{{ old('nama', $product->nama) }}"
-                                class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 font-medium @error('nama') border-red-400 bg-red-50 @enderror"
+                                value="<?php echo e(old('nama', $product->nama)); ?>"
+                                class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 font-medium <?php $__errorArgs = ['nama'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-400 bg-red-50 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                 required
                             >
-                            @error('nama')
+                            <?php $__errorArgs = ['nama'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <p class="mt-2 text-sm text-red-500 flex items-center">
                                     <i class="fas fa-exclamation-circle mr-2"></i>
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </p>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
-                    {{-- Kategori --}}
+                    
                     <div class="mt-6">
                         <label for="category_id" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
                             <span class="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center mr-2">
@@ -149,26 +165,42 @@ PERBEDAAN DENGAN CREATE
                         <select 
                             name="category_id" 
                             id="category_id"
-                            class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 cursor-pointer @error('category_id') border-red-400 bg-red-50 @enderror"
+                            class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 cursor-pointer <?php $__errorArgs = ['category_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-400 bg-red-50 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                             required
                         >
                             <option value="">-- Pilih Kategori --</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
-                                    {{ $category->nama }}
+                            <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($category->id); ?>" <?php echo e(old('category_id', $product->category_id) == $category->id ? 'selected' : ''); ?>>
+                                    <?php echo e($category->nama); ?>
+
                                 </option>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
-                        @error('category_id')
+                        <?php $__errorArgs = ['category_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                             <p class="mt-2 text-sm text-red-500 flex items-center">
                                 <i class="fas fa-exclamation-circle mr-2"></i>
-                                {{ $message }}
+                                <?php echo e($message); ?>
+
                             </p>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                        {{-- Harga --}}
+                        
                         <div>
                             <label for="harga" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
                                 <span class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-600 rounded-lg flex items-center justify-center mr-2">
@@ -182,21 +214,36 @@ PERBEDAAN DENGAN CREATE
                                     type="number" 
                                     name="harga" 
                                     id="harga"
-                                    value="{{ old('harga', $product->harga) }}"
+                                    value="<?php echo e(old('harga', $product->harga)); ?>"
                                     min="0"
-                                    class="w-full pl-14 pr-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 font-bold @error('harga') border-red-400 bg-red-50 @enderror"
+                                    class="w-full pl-14 pr-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 font-bold <?php $__errorArgs = ['harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-400 bg-red-50 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                     required
                                 >
                             </div>
-                            @error('harga')
+                            <?php $__errorArgs = ['harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <p class="mt-2 text-sm text-red-500 flex items-center">
                                     <i class="fas fa-exclamation-circle mr-2"></i>
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </p>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
 
-                        {{-- Stok --}}
+                        
                         <div>
                             <label for="stok" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
                                 <span class="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center mr-2">
@@ -208,21 +255,36 @@ PERBEDAAN DENGAN CREATE
                                 type="number" 
                                 name="stok" 
                                 id="stok"
-                                value="{{ old('stok', $product->stok) }}"
+                                value="<?php echo e(old('stok', $product->stok)); ?>"
                                 min="0"
-                                class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 font-bold @error('stok') border-red-400 bg-red-50 @enderror"
+                                class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 font-bold <?php $__errorArgs = ['stok'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-400 bg-red-50 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                 required
                             >
-                            @error('stok')
+                            <?php $__errorArgs = ['stok'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                                 <p class="mt-2 text-sm text-red-500 flex items-center">
                                     <i class="fas fa-exclamation-circle mr-2"></i>
-                                    {{ $message }}
+                                    <?php echo e($message); ?>
+
                                 </p>
-                            @enderror
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
-                    {{-- Deskripsi --}}
+                    
                     <div class="mt-6">
                         <label for="deskripsi" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
                             <span class="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg flex items-center justify-center mr-2">
@@ -235,19 +297,34 @@ PERBEDAAN DENGAN CREATE
                             name="deskripsi" 
                             id="deskripsi"
                             rows="3"
-                            class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 resize-none @error('deskripsi') border-red-400 bg-red-50 @enderror"
+                            class="w-full px-5 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 text-gray-800 resize-none <?php $__errorArgs = ['deskripsi'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-400 bg-red-50 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                             placeholder="Deskripsi singkat tentang produk ini"
-                        >{{ old('deskripsi', $product->deskripsi) }}</textarea>
-                        @error('deskripsi')
+                        ><?php echo e(old('deskripsi', $product->deskripsi)); ?></textarea>
+                        <?php $__errorArgs = ['deskripsi'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                             <p class="mt-2 text-sm text-red-500 flex items-center">
                                 <i class="fas fa-exclamation-circle mr-2"></i>
-                                {{ $message }}
+                                <?php echo e($message); ?>
+
                             </p>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
-                    {{-- Upload Gambar dengan Preview --}}
-                    <div class="mt-6" x-data="imageUpload('{{ $product->gambar ? Storage::url($product->gambar) : '' }}')">
+                    
+                    <div class="mt-6" x-data="imageUpload('<?php echo e($product->gambar ? Storage::url($product->gambar) : ''); ?>')">
                         <label class="flex items-center text-sm font-semibold text-gray-700 mb-3">
                             <span class="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center mr-2">
                                 <i class="fas fa-image text-white text-xs"></i>
@@ -256,7 +333,7 @@ PERBEDAAN DENGAN CREATE
                             <span class="ml-2 text-xs text-gray-400 font-normal">(opsional)</span>
                         </label>
                         
-                        {{-- Preview Container --}}
+                        
                         <div x-show="imagePreview" class="mb-4">
                             <div class="relative inline-block">
                                 <img :src="imagePreview" class="w-40 h-40 object-cover rounded-2xl shadow-lg border-4 border-white">
@@ -269,7 +346,7 @@ PERBEDAAN DENGAN CREATE
                             <p class="mt-2 text-sm text-gray-500" x-text="fileName || 'Gambar saat ini'"></p>
                         </div>
 
-                        {{-- Upload Area --}}
+                        
                         <div x-show="!imagePreview"
                              class="relative mt-1 flex justify-center px-8 pt-10 pb-10 border-2 border-gray-200 border-dashed rounded-2xl hover:border-indigo-400 bg-gray-50 hover:bg-indigo-50/50 transition-all duration-300 cursor-pointer group"
                              :class="{ 'border-indigo-500 bg-indigo-50': isDragging }"
@@ -295,42 +372,50 @@ PERBEDAAN DENGAN CREATE
                                    accept="image/jpeg,image/png,image/webp"
                                    @change="handleFileSelect($event)">
                         </div>
-                        @error('gambar')
+                        <?php $__errorArgs = ['gambar'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                             <p class="mt-2 text-sm text-red-500 flex items-center">
                                 <i class="fas fa-exclamation-circle mr-2"></i>
-                                {{ $message }}
+                                <?php echo e($message); ?>
+
                             </p>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
-                    {{-- Info Stats Cards --}}
+                    
                     <div class="grid grid-cols-2 gap-4 mt-8">
                         <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-4 text-center border border-indigo-100">
                             <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-2">
                                 <i class="fas fa-calendar-plus text-white text-sm"></i>
                             </div>
                             <p class="text-xs text-gray-500 mb-1">Dibuat</p>
-                            <p class="text-sm font-bold text-gray-800">{{ $product->created_at->format('d M Y H:i') }}</p>
+                            <p class="text-sm font-bold text-gray-800"><?php echo e($product->created_at->format('d M Y H:i')); ?></p>
                         </div>
                         <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 text-center border border-amber-100">
                             <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-2">
                                 <i class="fas fa-clock text-white text-sm"></i>
                             </div>
                             <p class="text-xs text-gray-500 mb-1">Terakhir diubah</p>
-                            <p class="text-sm font-bold text-gray-800">{{ $product->updated_at->format('d M Y H:i') }}</p>
+                            <p class="text-sm font-bold text-gray-800"><?php echo e($product->updated_at->format('d M Y H:i')); ?></p>
                         </div>
                     </div>
                 </div>
 
-                {{-- Submit Buttons --}}
+                
                 <div class="px-8 py-5 bg-gray-50/80 border-t border-gray-100 flex items-center justify-between">
-                    <a href="{{ route('admin.products.show', $product) }}" 
+                    <a href="<?php echo e(route('admin.products.show', $product)); ?>" 
                        class="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center group">
                         <i class="fas fa-eye mr-2 group-hover:scale-110 transition-transform"></i>
                         Lihat Detail Produk
                     </a>
                     <div class="flex items-center space-x-3">
-                        <a href="{{ route('admin.products.index') }}" 
+                        <a href="<?php echo e(route('admin.products.index')); ?>" 
                            class="px-6 py-3 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
                             Batal
                         </a>
@@ -344,7 +429,7 @@ PERBEDAAN DENGAN CREATE
             </form>
         </div>
 
-        {{-- Danger Zone --}}
+        
         <div class="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-red-100 overflow-hidden">
             <div class="px-6 py-4 bg-gradient-to-r from-red-500 to-rose-500">
                 <div class="flex items-center">
@@ -363,11 +448,11 @@ PERBEDAAN DENGAN CREATE
                         <p class="font-semibold text-gray-800">Hapus Produk</p>
                         <p class="text-sm text-gray-500">Produk akan dihapus secara permanen dari sistem</p>
                     </div>
-                    <form action="{{ route('admin.products.destroy', $product) }}" 
+                    <form action="<?php echo e(route('admin.products.destroy', $product)); ?>" 
                           method="POST"
-                          onsubmit="return confirm('PERINGATAN: Menghapus produk {{ $product->nama }} akan menghapusnya secara permanen. Yakin ingin melanjutkan?')">
-                        @csrf
-                        @method('DELETE')
+                          onsubmit="return confirm('PERINGATAN: Menghapus produk <?php echo e($product->nama); ?> akan menghapusnya secara permanen. Yakin ingin melanjutkan?')">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('DELETE'); ?>
                         <button type="submit" 
                                 class="px-6 py-3 bg-white border-2 border-red-200 text-red-600 font-semibold rounded-xl hover:bg-red-50 hover:border-red-300 transition-all duration-200 flex items-center">
                             <i class="fas fa-trash-alt mr-2"></i>
@@ -379,9 +464,9 @@ PERBEDAAN DENGAN CREATE
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
 function imageUpload(existingImage = null) {
     return {
@@ -425,4 +510,6 @@ function imageUpload(existingImage = null) {
     }
 }
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\laragon\www\kantin-modern\resources\views/admin/products/edit.blade.php ENDPATH**/ ?>

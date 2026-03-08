@@ -120,6 +120,19 @@ class AdminController extends Controller
         $oldStatus = $order->status;
         $newStatus = $request->status;
 
+        // Define allowed status transitions (status can only move forward)
+        $allowedTransitions = [
+            'pending' => ['diproses', 'selesai', 'batal'],
+            'diproses' => ['selesai', 'batal'],
+            'selesai' => [], // Final status - cannot change
+            'batal' => [],   // Final status - cannot change
+        ];
+
+        // Check if transition is allowed
+        if (!in_array($newStatus, $allowedTransitions[$oldStatus] ?? [])) {
+            return back()->with('error', "Status tidak dapat diubah dari {$oldStatus} ke {$newStatus}.");
+        }
+
         // Jika dibatalkan, kembalikan stok
         if ($newStatus === 'batal' && $oldStatus !== 'batal') {
             DB::transaction(function () use ($order) {

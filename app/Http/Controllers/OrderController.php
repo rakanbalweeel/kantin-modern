@@ -110,6 +110,13 @@ class OrderController extends Controller
         }
 
         if (!empty($errors)) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => implode(' ', $errors),
+                    'errors' => $errors
+                ], 422);
+            }
             return back()->withErrors($errors)->withInput();
         }
 
@@ -154,10 +161,25 @@ class OrderController extends Controller
                 return $order;
             });
 
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Pesanan berhasil dibuat!',
+                    'order' => $order,
+                    'redirect' => route('siswa.orders.show', $order)
+                ]);
+            }
+
             return redirect()->route('siswa.orders.show', $order)
                 ->with('success', 'Pesanan berhasil dibuat!');
 
         } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan saat membuat pesanan: ' . $e->getMessage()
+                ], 500);
+            }
             return back()
                 ->with('error', 'Terjadi kesalahan saat membuat pesanan: ' . $e->getMessage())
                 ->withInput();
@@ -184,12 +206,18 @@ class OrderController extends Controller
      * Tampilkan riwayat pesanan siswa
      * GET /siswa/orders
      */
-    public function history()
+    public function history(Request $request)
     {
-        $orders = Order::forUser(Auth::id())
-            ->with('orderDetails')
-            ->latest()
-            ->paginate(10);
+        $query = Order::forUser(Auth::id())
+            ->with(['orderDetails.product'])
+            ->latest();
+
+        // Filter by status if provided
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->paginate(10)->withQueryString();
 
         return view('siswa.orders.index', compact('orders'));
     }

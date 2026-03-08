@@ -1,17 +1,4 @@
-{{--
-==========================================================================
-HALAMAN LOGIN - RasaPelajar
-==========================================================================
-Halaman login dengan tampilan modern dan fitur lengkap.
 
-FITUR:
-- Show/hide password toggle
-- Remember me checkbox
-- Demo account quick fill
-- Responsive design
-- Animated background
-==========================================================================
---}}
 
 <!DOCTYPE html>
 <html lang="id">
@@ -44,7 +31,7 @@ FITUR:
     </style>
 </head>
 <body class="min-h-screen">
-    {{-- Animated Background --}}
+    
     <div class="fixed inset-0 -z-10 overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500"></div>
         <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
@@ -54,44 +41,44 @@ FITUR:
 
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" x-data="loginForm()">
         <div class="max-w-md w-full space-y-8">
-            {{-- Card Login --}}
+            
             <div class="glass rounded-3xl shadow-2xl p-8 sm:p-10">
-                {{-- Header --}}
+                
                 <div class="text-center mb-8">
-                    <a href="{{ route('landing') }}" class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg transform hover:scale-105 transition duration-300">
+                    <a href="<?php echo e(route('landing')); ?>" class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg transform hover:scale-105 transition duration-300">
                         <span class="text-4xl">🍽️</span>
                     </a>
                     <h2 class="mt-6 text-3xl font-extrabold text-gray-900">Selamat Datang!</h2>
                     <p class="mt-2 text-gray-600">Masuk ke akun <span class="text-indigo-600 font-semibold">RasaPelajar</span></p>
                 </div>
 
-                {{-- Alert Success --}}
-                @if(session('success'))
+                
+                <?php if(session('success')): ?>
                     <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg" x-data="{ show: true }" x-show="show" x-transition>
                         <div class="flex items-center">
                             <span class="text-green-500 mr-3">✓</span>
-                            <p class="text-green-700 text-sm">{{ session('success') }}</p>
+                            <p class="text-green-700 text-sm"><?php echo e(session('success')); ?></p>
                             <button @click="show = false" class="ml-auto text-green-500 hover:text-green-700">&times;</button>
                         </div>
                     </div>
-                @endif
+                <?php endif; ?>
 
-                {{-- Alert Error --}}
-                @if(session('error'))
+                
+                <?php if(session('error')): ?>
                     <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg" x-data="{ show: true }" x-show="show" x-transition>
                         <div class="flex items-center">
                             <span class="text-red-500 mr-3">✕</span>
-                            <p class="text-red-700 text-sm">{{ session('error') }}</p>
+                            <p class="text-red-700 text-sm"><?php echo e(session('error')); ?></p>
                             <button @click="show = false" class="ml-auto text-red-500 hover:text-red-700">&times;</button>
                         </div>
                     </div>
-                @endif
+                <?php endif; ?>
 
-                {{-- Form Login --}}
-                <form action="{{ route('login') }}" method="POST" class="space-y-6" @submit="loading = true">
-                    @csrf
+                
+                <form action="<?php echo e(route('login')); ?>" method="POST" class="space-y-6" @submit="loading = true">
+                    <?php echo csrf_field(); ?>
 
-                    {{-- Input Email --}}
+                    
                     <div>
                         <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
                             📧 Email
@@ -102,8 +89,15 @@ FITUR:
                                 name="email" 
                                 id="email"
                                 x-model="email"
-                                value="{{ old('email') }}"
-                                class="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition duration-200 @error('email') border-red-500 bg-red-50 @enderror"
+                                value="<?php echo e(old('email')); ?>"
+                                class="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition duration-200 <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 bg-red-50 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                 placeholder="email@sekolah.com"
                                 required
                                 autofocus
@@ -114,14 +108,22 @@ FITUR:
                                 </template>
                             </div>
                         </div>
-                        @error('email')
+                        <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                             <p class="mt-2 text-sm text-red-600 flex items-center">
-                                <span class="mr-1">⚠</span> {{ $message }}
+                                <span class="mr-1">⚠</span> <?php echo e($message); ?>
+
                             </p>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
-                    {{-- Input Password --}}
+                    
                     <div>
                         <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
                             🔒 Password
@@ -132,7 +134,14 @@ FITUR:
                                 name="password" 
                                 id="password"
                                 x-model="password"
-                                class="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition duration-200 pr-12 @error('password') border-red-500 bg-red-50 @enderror"
+                                class="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition duration-200 pr-12 <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 bg-red-50 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                 placeholder="••••••••"
                                 required
                             >
@@ -145,14 +154,22 @@ FITUR:
                                 <span x-show="showPassword" class="text-lg">🙈</span>
                             </button>
                         </div>
-                        @error('password')
+                        <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                             <p class="mt-2 text-sm text-red-600 flex items-center">
-                                <span class="mr-1">⚠</span> {{ $message }}
+                                <span class="mr-1">⚠</span> <?php echo e($message); ?>
+
                             </p>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
-                    {{-- Remember Me --}}
+                    
                     <div class="flex items-center justify-between">
                         <label class="flex items-center cursor-pointer group">
                             <input type="checkbox" name="remember" class="w-5 h-5 text-indigo-600 border-2 border-gray-300 rounded focus:ring-indigo-500 transition">
@@ -160,7 +177,7 @@ FITUR:
                         </label>
                     </div>
 
-                    {{-- Submit Button --}}
+                    
                     <button 
                         type="submit"
                         :disabled="loading"
@@ -183,18 +200,18 @@ FITUR:
                     </button>
                 </form>
 
-                {{-- Link ke Register --}}
+                
                 <p class="mt-8 text-center text-gray-600">
                     Belum punya akun?
-                    <a href="{{ route('register') }}" class="text-indigo-600 font-bold hover:text-indigo-500 hover:underline transition">
+                    <a href="<?php echo e(route('register')); ?>" class="text-indigo-600 font-bold hover:text-indigo-500 hover:underline transition">
                         Daftar sekarang →
                     </a>
                 </p>
             </div>
 
-            {{-- Back to Home --}}
+            
             <div class="flex justify-center">
-                <a href="{{ route('landing') }}" 
+                <a href="<?php echo e(route('landing')); ?>" 
                    class="group inline-flex items-center text-white/80 hover:text-white transition-all duration-300">
                     <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 mr-3 group-hover:bg-white/20 group-hover:-translate-x-1 transition-all duration-300">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,7 +227,7 @@ FITUR:
     <script>
         function loginForm() {
             return {
-                email: '{{ old("email") }}',
+                email: '<?php echo e(old("email")); ?>',
                 password: '',
                 showPassword: false,
                 loading: false
@@ -219,3 +236,4 @@ FITUR:
     </script>
 </body>
 </html>
+<?php /**PATH C:\laragon\www\kantin-modern\resources\views/auth/login.blade.php ENDPATH**/ ?>

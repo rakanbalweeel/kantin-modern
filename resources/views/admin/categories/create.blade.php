@@ -24,11 +24,14 @@ PENJELASAN FORM
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Back Button + Header --}}
         <div class="mb-6">
-            <a href="{{ route('admin.categories.index') }}" class="inline-flex items-center text-gray-600 hover:text-gray-900">
-                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Kembali
+            <a href="{{ route('admin.categories.index') }}" 
+               class="group inline-flex items-center text-gray-500 hover:text-indigo-600 transition-all duration-300">
+                <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-white shadow-md border border-gray-100 mr-3 group-hover:shadow-lg group-hover:border-indigo-200 group-hover:-translate-x-1 transition-all duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </span>
+                <span class="font-medium">Kembali</span>
             </a>
             <h1 class="mt-4 text-2xl font-bold text-gray-900">Tambah Kategori Baru</h1>
             <p class="mt-1 text-gray-600">Buat kategori untuk mengelompokkan produk</p>

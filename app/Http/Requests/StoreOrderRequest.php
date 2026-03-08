@@ -31,6 +31,8 @@ namespace App\Http\Requests;
  */
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -41,6 +43,37 @@ class StoreOrderRequest extends FormRequest
     {
         // Hanya siswa yang bisa membuat pesanan
         return auth()->check() && auth()->user()->isSiswa();
+    }
+
+    /**
+     * Handle a failed authorization attempt.
+     */
+    protected function failedAuthorization()
+    {
+        if ($this->expectsJson()) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'message' => 'Anda tidak memiliki izin untuk membuat pesanan.'
+            ], 403));
+        }
+
+        parent::failedAuthorization();
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        if ($this->expectsJson()) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors()
+            ], 422));
+        }
+
+        parent::failedValidation($validator);
     }
 
     /**

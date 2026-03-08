@@ -1,19 +1,10 @@
-{{--
-==========================================================================
-DETAIL PESANAN (SHOW) - ADMIN
-==========================================================================
-Halaman ini menampilkan detail lengkap pesanan termasuk:
-- Info siswa
-- Daftar item yang dipesan
-- Status pesanan dengan kemampuan update
-==========================================================================
---}}
 
-@extends('layouts.app')
 
-@section('title', 'Detail Pesanan')
 
-@php
+
+<?php $__env->startSection('title', 'Detail Pesanan'); ?>
+
+<?php
     // Status configuration
     $statusConfig = [
         'pending' => [
@@ -50,15 +41,15 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
         ],
     ];
     $currentStatus = $statusConfig[$order->status] ?? $statusConfig['pending'];
-@endphp
+?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {{-- Back Button --}}
+        
         <div class="mb-6">
-            <a href="{{ route('admin.orders.index') }}" 
+            <a href="<?php echo e(route('admin.orders.index')); ?>" 
                class="group inline-flex items-center text-gray-500 hover:text-indigo-600 transition-all duration-300">
                 <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/80 backdrop-blur-sm shadow-lg border border-white/50 mr-3 group-hover:shadow-xl group-hover:border-indigo-200 group-hover:-translate-x-1 transition-all duration-300">
                     <i class="fas fa-arrow-left"></i>
@@ -67,9 +58,9 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
             </a>
         </div>
 
-        {{-- Header Card with Gradient --}}
-        <div class="bg-gradient-to-r {{ $currentStatus['gradient'] }} rounded-2xl shadow-xl p-6 mb-6 relative overflow-hidden">
-            {{-- Decorative Elements --}}
+        
+        <div class="bg-gradient-to-r <?php echo e($currentStatus['gradient']); ?> rounded-2xl shadow-xl p-6 mb-6 relative overflow-hidden">
+            
             <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
             <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
             
@@ -79,10 +70,10 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                         <i class="fas fa-receipt text-3xl text-white"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $order->kode_pesanan }}</h1>
+                        <h1 class="text-2xl md:text-3xl font-bold text-white"><?php echo e($order->kode_pesanan); ?></h1>
                         <div class="flex items-center gap-2 mt-1">
                             <i class="fas fa-calendar-alt text-white/70 text-sm"></i>
-                            <span class="text-white/90 text-sm">{{ $order->created_at->format('d F Y, H:i') }} WIB</span>
+                            <span class="text-white/90 text-sm"><?php echo e($order->created_at->format('d F Y, H:i')); ?> WIB</span>
                         </div>
                     </div>
                 </div>
@@ -90,63 +81,63 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                 <div class="flex items-center gap-3">
                     <div class="bg-white/20 backdrop-blur-sm px-5 py-3 rounded-xl">
                         <div class="flex items-center gap-2">
-                            <i class="fas {{ $currentStatus['icon'] }} text-white"></i>
-                            <span class="text-white font-bold text-lg">{{ $currentStatus['label'] }}</span>
+                            <i class="fas <?php echo e($currentStatus['icon']); ?> text-white"></i>
+                            <span class="text-white font-bold text-lg"><?php echo e($currentStatus['label']); ?></span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Stats Cards --}}
+        
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            {{-- Total Items --}}
+            
             <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
                         <i class="fas fa-boxes text-white text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-2xl font-bold text-gray-900">{{ $order->orderDetails->sum('jumlah') }}</p>
+                        <p class="text-2xl font-bold text-gray-900"><?php echo e($order->orderDetails->sum('jumlah')); ?></p>
                         <p class="text-xs text-gray-500">Total Item</p>
                     </div>
                 </div>
             </div>
 
-            {{-- Total Products --}}
+            
             <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-200">
                         <i class="fas fa-utensils text-white text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-2xl font-bold text-gray-900">{{ $order->orderDetails->count() }}</p>
+                        <p class="text-2xl font-bold text-gray-900"><?php echo e($order->orderDetails->count()); ?></p>
                         <p class="text-xs text-gray-500">Jenis Produk</p>
                     </div>
                 </div>
             </div>
 
-            {{-- Total Price --}}
+            
             <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-200">
                         <i class="fas fa-money-bill-wave text-white text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-xl font-bold text-gray-900">Rp {{ number_format($order->total, 0, ',', '.') }}</p>
+                        <p class="text-xl font-bold text-gray-900">Rp <?php echo e(number_format($order->total, 0, ',', '.')); ?></p>
                         <p class="text-xs text-gray-500">Total Bayar</p>
                     </div>
                 </div>
             </div>
 
-            {{-- Order Age --}}
+            
             <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-200">
                         <i class="fas fa-history text-white text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-xl font-bold text-gray-900">{{ $order->created_at->diffForHumans(null, true) }}</p>
+                        <p class="text-xl font-bold text-gray-900"><?php echo e($order->created_at->diffForHumans(null, true)); ?></p>
                         <p class="text-xs text-gray-500">Yang Lalu</p>
                     </div>
                 </div>
@@ -154,9 +145,9 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {{-- Order Info --}}
+            
             <div class="lg:col-span-2 space-y-6">
-                {{-- Items --}}
+                
                 <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
                     <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-5">
                         <div class="flex items-center gap-3">
@@ -165,57 +156,60 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                             </div>
                             <div>
                                 <h2 class="text-lg font-bold text-white">Detail Pesanan</h2>
-                                <p class="text-white/70 text-sm">{{ $order->orderDetails->count() }} produk dipesan</p>
+                                <p class="text-white/70 text-sm"><?php echo e($order->orderDetails->count()); ?> produk dipesan</p>
                             </div>
                         </div>
                     </div>
                     <div class="divide-y divide-gray-100">
-                        @foreach($order->orderDetails as $index => $detail)
+                        <?php $__currentLoopData = $order->orderDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="p-5 flex items-center gap-4 hover:bg-indigo-50/50 transition-all duration-300 group">
-                                {{-- Number Badge --}}
+                                
                                 <div class="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center text-indigo-600 font-bold text-sm group-hover:from-indigo-500 group-hover:to-purple-500 group-hover:text-white transition-all duration-300">
-                                    {{ $index + 1 }}
+                                    <?php echo e($index + 1); ?>
+
                                 </div>
                                 
-                                {{-- Product Image --}}
-                                @if($detail->product->gambar)
-                                    <img src="{{ Storage::url($detail->product->gambar) }}" 
-                                         alt="{{ $detail->product->nama }}"
+                                
+                                <?php if($detail->product->gambar): ?>
+                                    <img src="<?php echo e(Storage::url($detail->product->gambar)); ?>" 
+                                         alt="<?php echo e($detail->product->nama); ?>"
                                          class="w-16 h-16 rounded-xl object-cover shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
-                                @else
+                                <?php else: ?>
                                     <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center shadow-md">
                                         <i class="fas fa-utensils text-gray-400 text-xl"></i>
                                     </div>
-                                @endif
+                                <?php endif; ?>
                                 
-                                {{-- Product Info --}}
+                                
                                 <div class="flex-1 min-w-0">
-                                    <h3 class="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $detail->product->nama }}</h3>
+                                    <h3 class="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors"><?php echo e($detail->product->nama); ?></h3>
                                     <div class="flex items-center gap-2 mt-1">
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 text-xs">
                                             <i class="fas fa-barcode mr-1"></i>
-                                            {{ $detail->product->kode }}
+                                            <?php echo e($detail->product->kode); ?>
+
                                         </span>
                                         <span class="text-gray-400 text-sm">•</span>
-                                        <span class="text-gray-500 text-sm">{{ $detail->product->category->nama ?? 'Uncategorized' }}</span>
+                                        <span class="text-gray-500 text-sm"><?php echo e($detail->product->category->nama ?? 'Uncategorized'); ?></span>
                                     </div>
                                 </div>
                                 
-                                {{-- Price Info --}}
+                                
                                 <div class="text-right">
                                     <div class="flex items-center justify-end gap-2 text-sm text-gray-500 mb-1">
-                                        <span class="bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-md font-medium">{{ $detail->jumlah }}x</span>
-                                        <span>@ Rp {{ number_format($detail->harga, 0, ',', '.') }}</span>
+                                        <span class="bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-md font-medium"><?php echo e($detail->jumlah); ?>x</span>
+                                        <span>@ Rp <?php echo e(number_format($detail->harga, 0, ',', '.')); ?></span>
                                     </div>
                                     <p class="font-bold text-gray-900 text-lg">
-                                        Rp {{ number_format($detail->subtotal, 0, ',', '.') }}
+                                        Rp <?php echo e(number_format($detail->subtotal, 0, ',', '.')); ?>
+
                                     </p>
                                 </div>
                             </div>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                     
-                    {{-- Total Section --}}
+                    
                     <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-5 border-t border-indigo-100">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
@@ -224,15 +218,16 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                             </div>
                             <div class="text-right">
                                 <p class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                                    Rp {{ number_format($order->total, 0, ',', '.') }}
+                                    Rp <?php echo e(number_format($order->total, 0, ',', '.')); ?>
+
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {{-- Catatan --}}
-                @if($order->catatan)
+                
+                <?php if($order->catatan): ?>
                     <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-6">
                         <div class="flex items-start gap-4">
                             <div class="w-12 h-12 bg-gradient-to-br from-amber-100 to-yellow-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -242,15 +237,16 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                                 <h2 class="text-lg font-bold text-gray-900 mb-2">Catatan Pesanan</h2>
                                 <p class="text-gray-600 bg-amber-50 rounded-xl p-4 border border-amber-100">
                                     <i class="fas fa-quote-left text-amber-300 mr-2"></i>
-                                    {{ $order->catatan }}
+                                    <?php echo e($order->catatan); ?>
+
                                     <i class="fas fa-quote-right text-amber-300 ml-2"></i>
                                 </p>
                             </div>
                         </div>
                     </div>
-                @endif
+                <?php endif; ?>
 
-                {{-- Print/Actions --}}
+                
                 <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-6">
                     <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <i class="fas fa-cogs text-gray-400"></i>
@@ -261,7 +257,7 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                             <i class="fas fa-print"></i>
                             <span>Cetak</span>
                         </button>
-                        <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-gray-200 text-gray-700 rounded-xl hover:border-indigo-300 hover:bg-indigo-50 hover:-translate-y-0.5 transition-all duration-300">
+                        <a href="<?php echo e(route('admin.orders.index')); ?>" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-gray-200 text-gray-700 rounded-xl hover:border-indigo-300 hover:bg-indigo-50 hover:-translate-y-0.5 transition-all duration-300">
                             <i class="fas fa-list"></i>
                             <span>Semua Pesanan</span>
                         </a>
@@ -269,9 +265,9 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                 </div>
             </div>
 
-            {{-- Sidebar --}}
+            
             <div class="space-y-6">
-                {{-- Customer Info --}}
+                
                 <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
                     <div class="bg-gradient-to-r from-cyan-500 to-blue-500 p-4">
                         <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -285,37 +281,38 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                                 <span class="text-3xl">👨‍🎓</span>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="font-bold text-gray-900 text-lg truncate">{{ $order->user->name }}</p>
+                                <p class="font-bold text-gray-900 text-lg truncate"><?php echo e($order->user->name); ?></p>
                                 <p class="text-gray-500 text-sm flex items-center gap-1">
                                     <i class="fas fa-envelope text-xs"></i>
-                                    {{ $order->user->email }}
+                                    <?php echo e($order->user->email); ?>
+
                                 </p>
                             </div>
                         </div>
                         
-                        {{-- Additional Info --}}
+                        
                         <div class="mt-4 pt-4 border-t border-gray-100 space-y-3">
                             <div class="flex items-center justify-between text-sm">
                                 <span class="text-gray-500 flex items-center gap-2">
                                     <i class="fas fa-wallet text-cyan-500"></i>
                                     Saldo
                                 </span>
-                                <span class="font-semibold text-gray-900">Rp {{ number_format($order->user->saldo ?? 0, 0, ',', '.') }}</span>
+                                <span class="font-semibold text-gray-900">Rp <?php echo e(number_format($order->user->saldo ?? 0, 0, ',', '.')); ?></span>
                             </div>
                             <div class="flex items-center justify-between text-sm">
                                 <span class="text-gray-500 flex items-center gap-2">
                                     <i class="fas fa-shopping-bag text-cyan-500"></i>
                                     Total Order
                                 </span>
-                                <span class="font-semibold text-gray-900">{{ $order->user->orders->count() }} pesanan</span>
+                                <span class="font-semibold text-gray-900"><?php echo e($order->user->orders->count()); ?> pesanan</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {{-- Update Status --}}
-                @if(!in_array($order->status, ['selesai', 'batal']))
-                    @php
+                
+                <?php if(!in_array($order->status, ['selesai', 'batal'])): ?>
+                    <?php
                         // Define allowed next statuses based on current status
                         // Flow: pending -> diproses -> selesai (batal can be from any)
                         $allowedStatuses = [
@@ -323,7 +320,7 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                             'diproses' => ['selesai', 'batal'],
                         ];
                         $nextStatuses = $allowedStatuses[$order->status] ?? [];
-                    @endphp
+                    ?>
                     <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
                         <div class="bg-gradient-to-r from-violet-500 to-purple-500 p-4">
                             <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -332,14 +329,14 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                             </h2>
                         </div>
                         <div class="p-5">
-                            {{-- Current Status Info --}}
-                            <div class="mb-4 p-3 rounded-xl {{ $currentStatus['bg'] }} {{ $currentStatus['border'] }} border-2">
+                            
+                            <div class="mb-4 p-3 rounded-xl <?php echo e($currentStatus['bg']); ?> <?php echo e($currentStatus['border']); ?> border-2">
                                 <p class="text-xs text-gray-500 mb-1">Status Saat Ini</p>
                                 <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 bg-gradient-to-br {{ $currentStatus['gradient'] }} rounded-lg flex items-center justify-center">
-                                        <i class="fas {{ str_replace(' fa-spin', '', $currentStatus['icon']) }} text-white text-xs"></i>
+                                    <div class="w-6 h-6 bg-gradient-to-br <?php echo e($currentStatus['gradient']); ?> rounded-lg flex items-center justify-center">
+                                        <i class="fas <?php echo e(str_replace(' fa-spin', '', $currentStatus['icon'])); ?> text-white text-xs"></i>
                                     </div>
-                                    <span class="font-semibold {{ $currentStatus['text'] }}">{{ $currentStatus['label'] }}</span>
+                                    <span class="font-semibold <?php echo e($currentStatus['text']); ?>"><?php echo e($currentStatus['label']); ?></span>
                                 </div>
                             </div>
 
@@ -348,36 +345,36 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                                 <span class="text-sm text-gray-500">Pilih status selanjutnya:</span>
                             </div>
                             
-                            <form action="{{ route('admin.orders.updateStatus', $order) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
+                            <form action="<?php echo e(route('admin.orders.updateStatus', $order)); ?>" method="POST">
+                                <?php echo csrf_field(); ?>
+                                <?php echo method_field('PATCH'); ?>
                                 
                                 <div class="space-y-3 mb-4">
-                                    @foreach($statusConfig as $key => $config)
-                                        @if(in_array($key, $nextStatuses))
+                                    <?php $__currentLoopData = $statusConfig; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $config): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php if(in_array($key, $nextStatuses)): ?>
                                             <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all duration-300 border-gray-100 hover:border-gray-200 hover:bg-gray-50 hover:shadow-md">
-                                                <input type="radio" name="status" value="{{ $key }}" 
+                                                <input type="radio" name="status" value="<?php echo e($key); ?>" 
                                                        class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
-                                                <div class="w-8 h-8 bg-gradient-to-br {{ $config['gradient'] }} rounded-lg flex items-center justify-center">
-                                                    <i class="fas {{ str_replace(' fa-spin', '', $config['icon']) }} text-white text-sm"></i>
+                                                <div class="w-8 h-8 bg-gradient-to-br <?php echo e($config['gradient']); ?> rounded-lg flex items-center justify-center">
+                                                    <i class="fas <?php echo e(str_replace(' fa-spin', '', $config['icon'])); ?> text-white text-sm"></i>
                                                 </div>
                                                 <div class="flex-1">
-                                                    <span class="font-medium text-gray-700">{{ $config['label'] }}</span>
-                                                    @if($key == 'batal')
+                                                    <span class="font-medium text-gray-700"><?php echo e($config['label']); ?></span>
+                                                    <?php if($key == 'batal'): ?>
                                                         <p class="text-xs text-red-500">Pesanan akan dibatalkan</p>
-                                                    @elseif($key == 'selesai')
+                                                    <?php elseif($key == 'selesai'): ?>
                                                         <p class="text-xs text-emerald-500">Pesanan selesai & tidak bisa diubah</p>
-                                                    @elseif($key == 'diproses')
+                                                    <?php elseif($key == 'diproses'): ?>
                                                         <p class="text-xs text-blue-500">Pesanan sedang diproses</p>
-                                                    @endif
+                                                    <?php endif; ?>
                                                 </div>
                                                 <i class="fas fa-chevron-right text-gray-300"></i>
                                             </label>
-                                        @endif
-                                    @endforeach
+                                        <?php endif; ?>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
 
-                                {{-- Warning Message --}}
+                                
                                 <div class="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200">
                                     <div class="flex items-start gap-2">
                                         <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5"></i>
@@ -395,32 +392,32 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                             </form>
                         </div>
                     </div>
-                @else
-                    {{-- Status Final Info --}}
+                <?php else: ?>
+                    
                     <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
-                        <div class="bg-gradient-to-r {{ $currentStatus['gradient'] }} p-4">
+                        <div class="bg-gradient-to-r <?php echo e($currentStatus['gradient']); ?> p-4">
                             <h2 class="text-lg font-bold text-white flex items-center gap-2">
                                 <i class="fas fa-info-circle"></i>
                                 Status Pesanan
                             </h2>
                         </div>
                         <div class="p-5 text-center">
-                            <div class="w-20 h-20 bg-gradient-to-br {{ $currentStatus['gradient'] }} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                                <i class="fas {{ str_replace(' fa-spin', '', $currentStatus['icon']) }} text-white text-3xl"></i>
+                            <div class="w-20 h-20 bg-gradient-to-br <?php echo e($currentStatus['gradient']); ?> rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                <i class="fas <?php echo e(str_replace(' fa-spin', '', $currentStatus['icon'])); ?> text-white text-3xl"></i>
                             </div>
-                            <p class="font-bold text-xl text-gray-900 mb-1">{{ $currentStatus['label'] }}</p>
+                            <p class="font-bold text-xl text-gray-900 mb-1"><?php echo e($currentStatus['label']); ?></p>
                             <p class="text-gray-500 text-sm">
-                                @if($order->status == 'selesai')
+                                <?php if($order->status == 'selesai'): ?>
                                     Pesanan telah selesai diproses
-                                @else
+                                <?php else: ?>
                                     Pesanan telah dibatalkan
-                                @endif
+                                <?php endif; ?>
                             </p>
                         </div>
                     </div>
-                @endif
+                <?php endif; ?>
 
-                {{-- Timeline --}}
+                
                 <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
                     <div class="bg-gradient-to-r from-emerald-500 to-green-500 p-4">
                         <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -430,11 +427,11 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                     </div>
                     <div class="p-5">
                         <div class="relative">
-                            {{-- Timeline Line --}}
+                            
                             <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-200 to-blue-200"></div>
                             
                             <div class="space-y-6">
-                                {{-- Order Created --}}
+                                
                                 <div class="flex items-start gap-4 relative">
                                     <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-500 rounded-full flex items-center justify-center shadow-md z-10">
                                         <i class="fas fa-plus text-white text-xs"></i>
@@ -443,13 +440,14 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                                         <p class="font-semibold text-emerald-700">Pesanan Dibuat</p>
                                         <p class="text-xs text-emerald-600 flex items-center gap-1 mt-1">
                                             <i class="fas fa-clock"></i>
-                                            {{ $order->created_at->format('d M Y, H:i') }}
+                                            <?php echo e($order->created_at->format('d M Y, H:i')); ?>
+
                                         </p>
                                     </div>
                                 </div>
                                 
-                                @if($order->updated_at != $order->created_at)
-                                    {{-- Status Updated --}}
+                                <?php if($order->updated_at != $order->created_at): ?>
+                                    
                                     <div class="flex items-start gap-4 relative">
                                         <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-md z-10">
                                             <i class="fas fa-sync-alt text-white text-xs"></i>
@@ -458,18 +456,20 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                                             <p class="font-semibold text-blue-700">Status Diperbarui</p>
                                             <p class="text-xs text-blue-600 flex items-center gap-1 mt-1">
                                                 <i class="fas fa-clock"></i>
-                                                {{ $order->updated_at->format('d M Y, H:i') }}
+                                                <?php echo e($order->updated_at->format('d M Y, H:i')); ?>
+
                                             </p>
-                                            <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md {{ $currentStatus['bg'] }} {{ $currentStatus['text'] }} text-xs font-medium">
-                                                <i class="fas {{ str_replace(' fa-spin', '', $currentStatus['icon']) }}"></i>
-                                                {{ $currentStatus['label'] }}
+                                            <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md <?php echo e($currentStatus['bg']); ?> <?php echo e($currentStatus['text']); ?> text-xs font-medium">
+                                                <i class="fas <?php echo e(str_replace(' fa-spin', '', $currentStatus['icon'])); ?>"></i>
+                                                <?php echo e($currentStatus['label']); ?>
+
                                             </div>
                                         </div>
                                     </div>
-                                @endif
+                                <?php endif; ?>
                                 
-                                @if($order->status == 'selesai')
-                                    {{-- Completed --}}
+                                <?php if($order->status == 'selesai'): ?>
+                                    
                                     <div class="flex items-start gap-4 relative">
                                         <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-500 rounded-full flex items-center justify-center shadow-md z-10">
                                             <i class="fas fa-check text-white text-xs"></i>
@@ -479,8 +479,8 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                                             <p class="text-xs text-emerald-600">Pesanan telah diselesaikan</p>
                                         </div>
                                     </div>
-                                @elseif($order->status == 'batal')
-                                    {{-- Cancelled --}}
+                                <?php elseif($order->status == 'batal'): ?>
+                                    
                                     <div class="flex items-start gap-4 relative">
                                         <div class="w-8 h-8 bg-gradient-to-br from-red-500 to-rose-500 rounded-full flex items-center justify-center shadow-md z-10">
                                             <i class="fas fa-ban text-white text-xs"></i>
@@ -490,7 +490,7 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
                                             <p class="text-xs text-red-600">Pesanan telah dibatalkan</p>
                                         </div>
                                     </div>
-                                @endif
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -499,4 +499,6 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\laragon\www\kantin-modern\resources\views/admin/orders/show.blade.php ENDPATH**/ ?>
