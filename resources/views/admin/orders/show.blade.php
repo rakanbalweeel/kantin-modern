@@ -1,11 +1,6 @@
 {{--
 ==========================================================================
-DETAIL PESANAN (SHOW) - ADMIN
-==========================================================================
-Halaman ini menampilkan detail lengkap pesanan termasuk:
-- Info siswa
-- Daftar item yang dipesan
-- Status pesanan dengan kemampuan update
+DETAIL PESANAN (SHOW) - ADMIN - DARK THEME
 ==========================================================================
 --}}
 
@@ -13,486 +8,125 @@ Halaman ini menampilkan detail lengkap pesanan termasuk:
 
 @section('title', 'Detail Pesanan')
 
+@section('content')
 @php
-    // Status configuration
     $statusConfig = [
-        'pending' => [
-            'gradient' => 'from-amber-500 to-yellow-500',
-            'bg' => 'bg-amber-50',
-            'text' => 'text-amber-700',
-            'border' => 'border-amber-200',
-            'icon' => 'fa-clock',
-            'label' => 'Menunggu'
-        ],
-        'diproses' => [
-            'gradient' => 'from-blue-500 to-indigo-500',
-            'bg' => 'bg-blue-50',
-            'text' => 'text-blue-700',
-            'border' => 'border-blue-200',
-            'icon' => 'fa-spinner fa-spin',
-            'label' => 'Diproses'
-        ],
-        'selesai' => [
-            'gradient' => 'from-emerald-500 to-green-500',
-            'bg' => 'bg-emerald-50',
-            'text' => 'text-emerald-700',
-            'border' => 'border-emerald-200',
-            'icon' => 'fa-check-circle',
-            'label' => 'Selesai'
-        ],
-        'batal' => [
-            'gradient' => 'from-red-500 to-rose-500',
-            'bg' => 'bg-red-50',
-            'text' => 'text-red-700',
-            'border' => 'border-red-200',
-            'icon' => 'fa-times-circle',
-            'label' => 'Dibatalkan'
-        ],
+        'pending' => ['bg' => 'bg-yellow-500/20', 'text' => 'text-yellow-400', 'border' => 'border-yellow-500/30'],
+        'diproses' => ['bg' => 'bg-blue-500/20', 'text' => 'text-blue-400', 'border' => 'border-blue-500/30'],
+        'selesai' => ['bg' => 'bg-emerald-500/20', 'text' => 'text-emerald-400', 'border' => 'border-emerald-500/30'],
+        'batal' => ['bg' => 'bg-red-500/20', 'text' => 'text-red-400', 'border' => 'border-red-500/30'],
     ];
-    $currentStatus = $statusConfig[$order->status] ?? $statusConfig['pending'];
+    $config = $statusConfig[$order->status] ?? $statusConfig['pending'];
 @endphp
 
-@section('content')
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {{-- Back Button --}}
+<div class="min-h-screen hero-gradient py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {{-- Header --}}
         <div class="mb-6">
-            <a href="{{ route('admin.orders.index') }}" 
-               class="group inline-flex items-center text-gray-500 hover:text-indigo-600 transition-all duration-300">
-                <span class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/80 backdrop-blur-sm shadow-lg border border-white/50 mr-3 group-hover:shadow-xl group-hover:border-indigo-200 group-hover:-translate-x-1 transition-all duration-300">
+            <a href="{{ route('admin.orders.index') }}" class="group inline-flex items-center text-slate-400 hover:text-orange-400 transition-all">
+                <span class="flex items-center justify-center w-10 h-10 rounded-xl glass mr-3 group-hover:-translate-x-1 transition-all">
                     <i class="fas fa-arrow-left"></i>
                 </span>
-                <span class="font-medium">Kembali ke Daftar Pesanan</span>
+                <span class="font-medium">Kembali</span>
             </a>
+            <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Detail <span class="gradient-text">Pesanan</span></h1>
+                    <p class="mt-1 text-slate-400 font-mono">{{ $order->kode_pesanan }}</p>
+                </div>
+                <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold {{ $config['bg'] }} {{ $config['text'] }} border {{ $config['border'] }} mt-4 md:mt-0">
+                    <i class="fas fa-circle text-xs mr-2"></i>
+                    {{ ucfirst($order->status) }}
+                </span>
+            </div>
         </div>
 
-        {{-- Header Card with Gradient --}}
-        <div class="bg-gradient-to-r {{ $currentStatus['gradient'] }} rounded-2xl shadow-xl p-6 mb-6 relative overflow-hidden">
-            {{-- Decorative Elements --}}
-            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
-            <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
+        {{-- Info Cards --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {{-- Info Pembeli --}}
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="font-bold text-white mb-4 flex items-center">
+                    <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-user text-blue-400"></i>
+                    </div>
+                    Informasi Pembeli
+                </h3>
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center mr-4">
+                        <span class="text-white font-bold text-lg">{{ strtoupper(substr($order->user->name ?? 'U', 0, 1)) }}</span>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-white">{{ $order->user->name ?? 'User' }}</p>
+                        <p class="text-sm text-slate-400">{{ $order->user->email ?? '' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Info Waktu --}}
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="font-bold text-white mb-4 flex items-center">
+                    <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-clock text-purple-400"></i>
+                    </div>
+                    Informasi Waktu
+                </h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Tanggal Pesan</span>
+                        <span class="text-white">{{ $order->created_at->locale('id')->isoFormat('D MMM Y, HH:mm') }}</span>
+                    </div>
+                    @if($order->updated_at != $order->created_at)
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Terakhir Update</span>
+                            <span class="text-white">{{ $order->updated_at->locale('id')->isoFormat('D MMM Y, HH:mm') }}</span>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        {{-- Order Items --}}
+        <div class="glass-card rounded-2xl overflow-hidden mb-8">
+            <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                <h3 class="font-bold text-white flex items-center">
+                    <i class="fas fa-shopping-basket mr-2"></i> Detail Pesanan
+                </h3>
+            </div>
+            <div class="divide-y divide-slate-700/50">
+                @foreach($order->orderDetails as $detail)
+                    <div class="p-6 flex items-center justify-between hover:bg-white/5 transition-colors">
+                        <div class="flex items-center">
+                            @if($detail->product && $detail->product->gambar)
+                                <img src="{{ asset('storage/' . $detail->product->gambar) }}" alt="{{ $detail->product->nama }}" class="w-16 h-16 rounded-xl object-cover mr-4 border border-slate-700">
+                            @else
+                                <div class="w-16 h-16 bg-slate-800 rounded-xl flex items-center justify-center mr-4">
+                                    <i class="fas fa-utensils text-slate-600 text-xl"></i>
+                                </div>
+                            @endif
+                            <div>
+                                <p class="font-semibold text-white">{{ $detail->product->nama ?? 'Produk tidak tersedia' }}</p>
+                                <p class="text-sm text-slate-400">Rp {{ number_format($detail->harga, 0, ',', '.') }} x {{ $detail->jumlah }}</p>
+                            </div>
+                        </div>
+                        <p class="font-bold text-orange-400">Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</p>
+                    </div>
+                @endforeach
+            </div>
             
-            <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                        <i class="fas fa-receipt text-3xl text-white"></i>
+            {{-- Total --}}
+            <div class="bg-slate-800/50 p-6 border-t border-slate-700">
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-400">Subtotal</span>
+                        <span class="text-white">Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
                     </div>
-                    <div>
-                        <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $order->kode_pesanan }}</h1>
-                        <div class="flex items-center gap-2 mt-1">
-                            <i class="fas fa-calendar-alt text-white/70 text-sm"></i>
-                            <span class="text-white/90 text-sm">{{ $order->created_at->format('d F Y, H:i') }} WIB</span>
-                        </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-slate-400">Pajak ({{ $order->pajak_persen ?? 0 }}%)</span>
+                        <span class="text-white">Rp {{ number_format($order->pajak ?? 0, 0, ',', '.') }}</span>
                     </div>
-                </div>
-                
-                <div class="flex items-center gap-3">
-                    <div class="bg-white/20 backdrop-blur-sm px-5 py-3 rounded-xl">
-                        <div class="flex items-center gap-2">
-                            <i class="fas {{ $currentStatus['icon'] }} text-white"></i>
-                            <span class="text-white font-bold text-lg">{{ $currentStatus['label'] }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Stats Cards --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            {{-- Total Items --}}
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
-                        <i class="fas fa-boxes text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-2xl font-bold text-gray-900">{{ $order->orderDetails->sum('jumlah') }}</p>
-                        <p class="text-xs text-gray-500">Total Item</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Total Products --}}
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-200">
-                        <i class="fas fa-utensils text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-2xl font-bold text-gray-900">{{ $order->orderDetails->count() }}</p>
-                        <p class="text-xs text-gray-500">Jenis Produk</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Total Price --}}
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-200">
-                        <i class="fas fa-money-bill-wave text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-xl font-bold text-gray-900">Rp {{ number_format($order->total, 0, ',', '.') }}</p>
-                        <p class="text-xs text-gray-500">Total Bayar</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Order Age --}}
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-200">
-                        <i class="fas fa-history text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <p class="text-xl font-bold text-gray-900">{{ $order->created_at->diffForHumans(null, true) }}</p>
-                        <p class="text-xs text-gray-500">Yang Lalu</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {{-- Order Info --}}
-            <div class="lg:col-span-2 space-y-6">
-                {{-- Items --}}
-                <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
-                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-5">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-shopping-basket text-white"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-lg font-bold text-white">Detail Pesanan</h2>
-                                <p class="text-white/70 text-sm">{{ $order->orderDetails->count() }} produk dipesan</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="divide-y divide-gray-100">
-                        @foreach($order->orderDetails as $index => $detail)
-                            <div class="p-5 flex items-center gap-4 hover:bg-indigo-50/50 transition-all duration-300 group">
-                                {{-- Number Badge --}}
-                                <div class="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center text-indigo-600 font-bold text-sm group-hover:from-indigo-500 group-hover:to-purple-500 group-hover:text-white transition-all duration-300">
-                                    {{ $index + 1 }}
-                                </div>
-                                
-                                {{-- Product Image --}}
-                                @if($detail->product->gambar)
-                                    <img src="{{ Storage::url($detail->product->gambar) }}" 
-                                         alt="{{ $detail->product->nama }}"
-                                         class="w-16 h-16 rounded-xl object-cover shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
-                                @else
-                                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center shadow-md">
-                                        <i class="fas fa-utensils text-gray-400 text-xl"></i>
-                                    </div>
-                                @endif
-                                
-                                {{-- Product Info --}}
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $detail->product->nama }}</h3>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 text-xs">
-                                            <i class="fas fa-barcode mr-1"></i>
-                                            {{ $detail->product->kode }}
-                                        </span>
-                                        <span class="text-gray-400 text-sm">•</span>
-                                        <span class="text-gray-500 text-sm">{{ $detail->product->category->nama ?? 'Uncategorized' }}</span>
-                                    </div>
-                                </div>
-                                
-                                {{-- Price Info --}}
-                                <div class="text-right">
-                                    <div class="flex items-center justify-end gap-2 text-sm text-gray-500 mb-1">
-                                        <span class="bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-md font-medium">{{ $detail->jumlah }}x</span>
-                                        <span>@ Rp {{ number_format($detail->harga, 0, ',', '.') }}</span>
-                                    </div>
-                                    <p class="font-bold text-gray-900 text-lg">
-                                        Rp {{ number_format($detail->subtotal, 0, ',', '.') }}
-                                    </p>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                    
-                    {{-- Total Section --}}
-                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-5 border-t border-indigo-100">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-calculator text-indigo-500"></i>
-                                <span class="text-gray-600 font-medium">Total Pembayaran</span>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                                    Rp {{ number_format($order->total, 0, ',', '.') }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Catatan --}}
-                @if($order->catatan)
-                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-6">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-gradient-to-br from-amber-100 to-yellow-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-sticky-note text-amber-500 text-xl"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-lg font-bold text-gray-900 mb-2">Catatan Pesanan</h2>
-                                <p class="text-gray-600 bg-amber-50 rounded-xl p-4 border border-amber-100">
-                                    <i class="fas fa-quote-left text-amber-300 mr-2"></i>
-                                    {{ $order->catatan }}
-                                    <i class="fas fa-quote-right text-amber-300 ml-2"></i>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                {{-- Print/Actions --}}
-                <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-6">
-                    <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-cogs text-gray-400"></i>
-                        Aksi Cepat
-                    </h2>
-                    <div class="flex flex-wrap gap-3">
-                        <button onclick="window.print()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 shadow-lg shadow-gray-200 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
-                            <i class="fas fa-print"></i>
-                            <span>Cetak</span>
-                        </button>
-                        <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-gray-200 text-gray-700 rounded-xl hover:border-indigo-300 hover:bg-indigo-50 hover:-translate-y-0.5 transition-all duration-300">
-                            <i class="fas fa-list"></i>
-                            <span>Semua Pesanan</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Sidebar --}}
-            <div class="space-y-6">
-                {{-- Customer Info --}}
-                <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
-                    <div class="bg-gradient-to-r from-cyan-500 to-blue-500 p-4">
-                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                            <i class="fas fa-user-graduate"></i>
-                            Info Siswa
-                        </h2>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center gap-4">
-                            <div class="w-16 h-16 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-2xl flex items-center justify-center shadow-md">
-                                <span class="text-3xl">👨‍🎓</span>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="font-bold text-gray-900 text-lg truncate">{{ $order->user->name }}</p>
-                                <p class="text-gray-500 text-sm flex items-center gap-1">
-                                    <i class="fas fa-envelope text-xs"></i>
-                                    {{ $order->user->email }}
-                                </p>
-                            </div>
-                        </div>
-                        
-                        {{-- Additional Info --}}
-                        <div class="mt-4 pt-4 border-t border-gray-100 space-y-3">
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-gray-500 flex items-center gap-2">
-                                    <i class="fas fa-wallet text-cyan-500"></i>
-                                    Saldo
-                                </span>
-                                <span class="font-semibold text-gray-900">Rp {{ number_format($order->user->saldo ?? 0, 0, ',', '.') }}</span>
-                            </div>
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-gray-500 flex items-center gap-2">
-                                    <i class="fas fa-shopping-bag text-cyan-500"></i>
-                                    Total Order
-                                </span>
-                                <span class="font-semibold text-gray-900">{{ $order->user->orders->count() }} pesanan</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Update Status --}}
-                @if(!in_array($order->status, ['selesai', 'batal']))
-                    @php
-                        // Define allowed next statuses based on current status
-                        // Flow: pending -> diproses -> selesai (batal can be from any)
-                        $allowedStatuses = [
-                            'pending' => ['diproses', 'selesai', 'batal'],
-                            'diproses' => ['selesai', 'batal'],
-                        ];
-                        $nextStatuses = $allowedStatuses[$order->status] ?? [];
-                    @endphp
-                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
-                        <div class="bg-gradient-to-r from-violet-500 to-purple-500 p-4">
-                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                                <i class="fas fa-exchange-alt"></i>
-                                Update Status
-                            </h2>
-                        </div>
-                        <div class="p-5">
-                            {{-- Current Status Info --}}
-                            <div class="mb-4 p-3 rounded-xl {{ $currentStatus['bg'] }} {{ $currentStatus['border'] }} border-2">
-                                <p class="text-xs text-gray-500 mb-1">Status Saat Ini</p>
-                                <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 bg-gradient-to-br {{ $currentStatus['gradient'] }} rounded-lg flex items-center justify-center">
-                                        <i class="fas {{ str_replace(' fa-spin', '', $currentStatus['icon']) }} text-white text-xs"></i>
-                                    </div>
-                                    <span class="font-semibold {{ $currentStatus['text'] }}">{{ $currentStatus['label'] }}</span>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center gap-2 mb-3">
-                                <i class="fas fa-arrow-down text-gray-400"></i>
-                                <span class="text-sm text-gray-500">Pilih status selanjutnya:</span>
-                            </div>
-                            
-                            <form action="{{ route('admin.orders.updateStatus', $order) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
-                                
-                                <div class="space-y-3 mb-4">
-                                    @foreach($statusConfig as $key => $config)
-                                        @if(in_array($key, $nextStatuses))
-                                            <label class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all duration-300 border-gray-100 hover:border-gray-200 hover:bg-gray-50 hover:shadow-md">
-                                                <input type="radio" name="status" value="{{ $key }}" 
-                                                       class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
-                                                <div class="w-8 h-8 bg-gradient-to-br {{ $config['gradient'] }} rounded-lg flex items-center justify-center">
-                                                    <i class="fas {{ str_replace(' fa-spin', '', $config['icon']) }} text-white text-sm"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <span class="font-medium text-gray-700">{{ $config['label'] }}</span>
-                                                    @if($key == 'batal')
-                                                        <p class="text-xs text-red-500">Pesanan akan dibatalkan</p>
-                                                    @elseif($key == 'selesai')
-                                                        <p class="text-xs text-emerald-500">Pesanan selesai & tidak bisa diubah</p>
-                                                    @elseif($key == 'diproses')
-                                                        <p class="text-xs text-blue-500">Pesanan sedang diproses</p>
-                                                    @endif
-                                                </div>
-                                                <i class="fas fa-chevron-right text-gray-300"></i>
-                                            </label>
-                                        @endif
-                                    @endforeach
-                                </div>
-
-                                {{-- Warning Message --}}
-                                <div class="mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200">
-                                    <div class="flex items-start gap-2">
-                                        <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5"></i>
-                                        <div>
-                                            <p class="text-sm text-amber-700 font-medium">Perhatian!</p>
-                                            <p class="text-xs text-amber-600">Status tidak dapat dikembalikan ke status sebelumnya setelah diupdate.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <button type="submit" class="w-full px-4 py-3 bg-gradient-to-r from-violet-500 to-purple-500 text-white rounded-xl hover:from-violet-600 hover:to-purple-600 shadow-lg shadow-violet-200 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 font-semibold flex items-center justify-center gap-2">
-                                    <i class="fas fa-save"></i>
-                                    Update Status
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                @else
-                    {{-- Status Final Info --}}
-                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
-                        <div class="bg-gradient-to-r {{ $currentStatus['gradient'] }} p-4">
-                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                                <i class="fas fa-info-circle"></i>
-                                Status Pesanan
-                            </h2>
-                        </div>
-                        <div class="p-5 text-center">
-                            <div class="w-20 h-20 bg-gradient-to-br {{ $currentStatus['gradient'] }} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                                <i class="fas {{ str_replace(' fa-spin', '', $currentStatus['icon']) }} text-white text-3xl"></i>
-                            </div>
-                            <p class="font-bold text-xl text-gray-900 mb-1">{{ $currentStatus['label'] }}</p>
-                            <p class="text-gray-500 text-sm">
-                                @if($order->status == 'selesai')
-                                    Pesanan telah selesai diproses
-                                @else
-                                    Pesanan telah dibatalkan
-                                @endif
-                            </p>
-                        </div>
-                    </div>
-                @endif
-
-                {{-- Timeline --}}
-                <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
-                    <div class="bg-gradient-to-r from-emerald-500 to-green-500 p-4">
-                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                            <i class="fas fa-history"></i>
-                            Timeline
-                        </h2>
-                    </div>
-                    <div class="p-5">
-                        <div class="relative">
-                            {{-- Timeline Line --}}
-                            <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-200 to-blue-200"></div>
-                            
-                            <div class="space-y-6">
-                                {{-- Order Created --}}
-                                <div class="flex items-start gap-4 relative">
-                                    <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-500 rounded-full flex items-center justify-center shadow-md z-10">
-                                        <i class="fas fa-plus text-white text-xs"></i>
-                                    </div>
-                                    <div class="flex-1 bg-emerald-50 rounded-xl p-3 border border-emerald-100">
-                                        <p class="font-semibold text-emerald-700">Pesanan Dibuat</p>
-                                        <p class="text-xs text-emerald-600 flex items-center gap-1 mt-1">
-                                            <i class="fas fa-clock"></i>
-                                            {{ $order->created_at->format('d M Y, H:i') }}
-                                        </p>
-                                    </div>
-                                </div>
-                                
-                                @if($order->updated_at != $order->created_at)
-                                    {{-- Status Updated --}}
-                                    <div class="flex items-start gap-4 relative">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-md z-10">
-                                            <i class="fas fa-sync-alt text-white text-xs"></i>
-                                        </div>
-                                        <div class="flex-1 bg-blue-50 rounded-xl p-3 border border-blue-100">
-                                            <p class="font-semibold text-blue-700">Status Diperbarui</p>
-                                            <p class="text-xs text-blue-600 flex items-center gap-1 mt-1">
-                                                <i class="fas fa-clock"></i>
-                                                {{ $order->updated_at->format('d M Y, H:i') }}
-                                            </p>
-                                            <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md {{ $currentStatus['bg'] }} {{ $currentStatus['text'] }} text-xs font-medium">
-                                                <i class="fas {{ str_replace(' fa-spin', '', $currentStatus['icon']) }}"></i>
-                                                {{ $currentStatus['label'] }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-                                
-                                @if($order->status == 'selesai')
-                                    {{-- Completed --}}
-                                    <div class="flex items-start gap-4 relative">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-500 rounded-full flex items-center justify-center shadow-md z-10">
-                                            <i class="fas fa-check text-white text-xs"></i>
-                                        </div>
-                                        <div class="flex-1 bg-emerald-50 rounded-xl p-3 border border-emerald-100">
-                                            <p class="font-semibold text-emerald-700">Pesanan Selesai</p>
-                                            <p class="text-xs text-emerald-600">Pesanan telah diselesaikan</p>
-                                        </div>
-                                    </div>
-                                @elseif($order->status == 'batal')
-                                    {{-- Cancelled --}}
-                                    <div class="flex items-start gap-4 relative">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-red-500 to-rose-500 rounded-full flex items-center justify-center shadow-md z-10">
-                                            <i class="fas fa-ban text-white text-xs"></i>
-                                        </div>
-                                        <div class="flex-1 bg-red-50 rounded-xl p-3 border border-red-100">
-                                            <p class="font-semibold text-red-700">Pesanan Dibatalkan</p>
-                                            <p class="text-xs text-red-600">Pesanan telah dibatalkan</p>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
+                    <div class="flex justify-between pt-2 border-t border-slate-700">
+                        <span class="font-bold text-white text-lg">Total</span>
+                        <span class="font-bold text-orange-400 text-lg">Rp {{ number_format($order->total, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>

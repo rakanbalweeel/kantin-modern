@@ -105,6 +105,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Cek apakah user adalah Kantin (Penjaga Kantin)
+     */
+    public function isKantin(): bool
+    {
+        return $this->role === 'kantin';
+    }
+
+    /**
      * Get total pesanan user (Accessor)
      * Penggunaan: $user->total_orders
      */
@@ -120,5 +128,38 @@ class User extends Authenticatable
     public function getTotalSpentAttribute(): int
     {
         return $this->orders()->where('status', 'selesai')->sum('total');
+    }
+
+    // ========================================================================
+    // RELASI: User hasMany Withdrawals (untuk Penjaga Kantin)
+    // ========================================================================
+
+    /**
+     * Relasi: User hasMany Withdrawals
+     * Hanya untuk user dengan role 'kantin'
+     */
+    public function withdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class);
+    }
+
+    /**
+     * Get total pendapatan kantin (dari pesanan selesai)
+     * Penggunaan: $user->total_pendapatan
+     */
+    public function getTotalPendapatanAttribute(): int
+    {
+        if (!$this->isKantin()) {
+            return 0;
+        }
+        return Order::where('status', 'selesai')->sum('subtotal');
+    }
+
+    /**
+     * Get total withdrawal yang sudah disetujui
+     */
+    public function getTotalWithdrawalAttribute(): int
+    {
+        return $this->withdrawals()->where('status', 'approved')->sum('jumlah');
     }
 }

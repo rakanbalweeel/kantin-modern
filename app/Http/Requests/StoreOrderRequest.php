@@ -97,6 +97,9 @@ class StoreOrderRequest extends FormRequest
             
             // Catatan opsional
             'catatan' => 'nullable|string|max:500',
+            
+            // Waktu pengambilan pesanan
+            'waktu_pengambilan' => 'required|in:istirahat_1,istirahat_2',
         ];
     }
 
@@ -115,6 +118,8 @@ class StoreOrderRequest extends FormRequest
             'items.*.jumlah.integer' => 'Jumlah harus berupa angka.',
             'items.*.jumlah.min' => 'Jumlah minimal 1.',
             'catatan.max' => 'Catatan maksimal 500 karakter.',
+            'waktu_pengambilan.required' => 'Pilih waktu pengambilan pesanan.',
+            'waktu_pengambilan.in' => 'Waktu pengambilan tidak valid.',
         ];
     }
 
@@ -128,6 +133,7 @@ class StoreOrderRequest extends FormRequest
             'items.*.product_id' => 'Produk',
             'items.*.jumlah' => 'Jumlah',
             'catatan' => 'Catatan',
+            'waktu_pengambilan' => 'Waktu Pengambilan',
         ];
     }
 }

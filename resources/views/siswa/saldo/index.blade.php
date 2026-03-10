@@ -1,8 +1,6 @@
 {{--
 ==========================================================================
-SISWA - SALDO VIRTUAL
-==========================================================================
-Halaman ini menampilkan informasi saldo dan riwayat top up siswa.
+SISWA - SALDO VIRTUAL - DARK THEME
 ==========================================================================
 --}}
 
@@ -11,33 +9,37 @@ Halaman ini menampilkan informasi saldo dan riwayat top up siswa.
 @section('title', 'Saldo Virtual')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
+<div class="min-h-screen hero-gradient py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Header --}}
         <div class="mb-8 text-center">
-            <h1 class="text-3xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
-                Saldo Virtual
+            <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-4">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="text-green-400 text-sm font-medium">Saldo Aktif</span>
+            </div>
+            <h1 class="text-3xl font-extrabold text-white">
+                Saldo <span class="gradient-text">Virtual</span>
             </h1>
-            <p class="mt-2 text-gray-500">Kelola saldo virtual kamu di sini</p>
+            <p class="mt-2 text-slate-400">Kelola saldo virtual kamu di sini</p>
         </div>
 
         {{-- Alert Messages --}}
         @if(session('success'))
-            <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl flex items-center">
+            <div class="mb-6 glass-card border-l-4 border-emerald-500 text-emerald-400 px-4 py-3 rounded-xl flex items-center">
                 <i class="fas fa-check-circle mr-3"></i>
                 {{ session('success') }}
             </div>
         @endif
 
         @if(session('error'))
-            <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl flex items-center">
+            <div class="mb-6 glass-card border-l-4 border-red-500 text-red-400 px-4 py-3 rounded-xl flex items-center">
                 <i class="fas fa-exclamation-circle mr-3"></i>
                 {{ session('error') }}
             </div>
         @endif
 
         {{-- Saldo Card --}}
-        <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-3xl shadow-2xl p-8 text-white mb-8"
+        <div class="relative overflow-hidden bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 rounded-3xl shadow-2xl shadow-orange-500/20 p-8 text-white mb-8"
              x-data="{ showTopup: false, topupAmount: '', topupPresets: [25000, 50000, 100000, 200000] }">
             {{-- Background Pattern --}}
             <div class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
@@ -54,115 +56,144 @@ Halaman ini menampilkan informasi saldo dan riwayat top up siswa.
                     </div>
                 </div>
                 <button @click="showTopup = !showTopup" 
-                        class="px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-semibold transition-all duration-300 flex items-center justify-center">
-                    <i class="fas fa-plus-circle mr-2"></i>
+                        class="px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-semibold transition-all duration-300 flex items-center justify-center group">
+                    <i class="fas fa-plus-circle mr-2 group-hover:scale-110 transition-transform"></i>
                     Top Up Saldo
                 </button>
             </div>
-            
+
             {{-- Top Up Form --}}
-            <div x-show="showTopup" 
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 -translate-y-4"
-                 x-transition:enter-end="opacity-100 translate-y-0"
-                 class="relative mt-8 pt-6 border-t border-white/20">
-                <form action="{{ route('siswa.saldo.topup') }}" method="POST" class="space-y-4">
+            <div x-show="showTopup" x-collapse class="mt-6 pt-6 border-t border-white/20">
+                <form action="{{ route('siswa.saldo.topup') }}" method="POST">
                     @csrf
-                    <p class="font-medium mb-3">Pilih Nominal Top Up:</p>
+                    <p class="text-white/80 text-sm mb-4">Pilih atau masukkan nominal top up:</p>
+                    
+                    {{-- Preset Amounts --}}
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                         <template x-for="preset in topupPresets" :key="preset">
                             <button type="button" 
                                     @click="topupAmount = preset"
-                                    :class="topupAmount == preset ? 'bg-white text-indigo-600' : 'bg-white/20 hover:bg-white/30'"
-                                    class="px-4 py-3 rounded-xl font-semibold transition-all duration-200">
-                                <span x-text="'Rp ' + new Intl.NumberFormat('id-ID').format(preset)"></span>
+                                    :class="topupAmount == preset ? 'bg-white text-orange-600' : 'bg-white/20 text-white hover:bg-white/30'"
+                                    class="px-4 py-3 rounded-xl font-semibold transition-all duration-300 text-sm">
+                                Rp <span x-text="new Intl.NumberFormat('id-ID').format(preset)"></span>
                             </button>
                         </template>
                     </div>
-                    <div class="flex flex-col md:flex-row gap-3">
-                        <div class="flex-1">
-                            <input type="number" 
-                                   name="jumlah" 
-                                   x-model="topupAmount"
-                                   min="10000" 
-                                   max="1000000"
-                                   placeholder="Masukkan nominal lain (min Rp 10.000)"
-                                   class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl placeholder-white/50 text-white focus:bg-white/30 focus:outline-none transition-all"
-                                   required>
-                        </div>
-                        <button type="submit" 
-                                :disabled="!topupAmount || topupAmount < 10000"
-                                :class="(!topupAmount || topupAmount < 10000) ? 'bg-white/30 cursor-not-allowed' : 'bg-white hover:bg-white/90 text-indigo-600'"
-                                class="px-6 py-3 rounded-xl font-semibold transition-all duration-300">
-                            <i class="fas fa-paper-plane mr-2"></i>Ajukan
-                        </button>
+
+                    {{-- Custom Amount --}}
+                    <div class="relative mb-4">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 font-medium">Rp</span>
+                        <input type="number" name="nominal" x-model="topupAmount" 
+                               placeholder="Nominal lainnya" min="10000" step="1000"
+                               class="w-full pl-12 pr-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/50 focus:border-white focus:ring-2 focus:ring-white/30 transition-all">
                     </div>
+
+                    <button type="submit" 
+                            :disabled="!topupAmount || topupAmount < 10000"
+                            class="w-full py-4 bg-white text-orange-600 rounded-xl font-bold hover:bg-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Ajukan Top Up
+                    </button>
                 </form>
             </div>
         </div>
 
-        {{-- Riwayat Top Up --}}
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100">
-                <h2 class="text-lg font-bold text-gray-800 flex items-center">
-                    <i class="fas fa-history mr-3 text-indigo-600"></i>
-                    Riwayat Top Up
-                </h2>
+        {{-- Info Cards --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="font-bold text-white mb-4 flex items-center">
+                    <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-info-circle text-blue-400"></i>
+                    </div>
+                    Cara Top Up
+                </h3>
+                <ul class="space-y-3 text-sm text-slate-400">
+                    <li class="flex items-start p-2 rounded-lg hover:bg-white/5 transition-colors">
+                        <span class="w-6 h-6 bg-orange-500/20 rounded-full flex items-center justify-center mr-3 mt-0.5 flex-shrink-0 text-orange-400 text-xs font-bold">1</span>
+                        <span>Ajukan permintaan top up dengan nominal yang diinginkan</span>
+                    </li>
+                    <li class="flex items-start p-2 rounded-lg hover:bg-white/5 transition-colors">
+                        <span class="w-6 h-6 bg-orange-500/20 rounded-full flex items-center justify-center mr-3 mt-0.5 flex-shrink-0 text-orange-400 text-xs font-bold">2</span>
+                        <span>Lakukan pembayaran ke admin/tata usaha</span>
+                    </li>
+                    <li class="flex items-start p-2 rounded-lg hover:bg-white/5 transition-colors">
+                        <span class="w-6 h-6 bg-orange-500/20 rounded-full flex items-center justify-center mr-3 mt-0.5 flex-shrink-0 text-orange-400 text-xs font-bold">3</span>
+                        <span>Admin akan memverifikasi dan saldo akan otomatis bertambah</span>
+                    </li>
+                </ul>
             </div>
-            
-            <div class="divide-y divide-gray-100">
-                @forelse($riwayatTopup as $topup)
-                    <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center mr-4
-                                @if($topup->status === 'pending') bg-amber-100 text-amber-600
-                                @elseif($topup->status === 'approved') bg-green-100 text-green-600
-                                @else bg-red-100 text-red-600 @endif">
-                                <i class="fas 
-                                    @if($topup->status === 'pending') fa-clock
-                                    @elseif($topup->status === 'approved') fa-check
-                                    @else fa-times @endif"></i>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-gray-800">Rp {{ number_format($topup->jumlah, 0, ',', '.') }}</p>
-                                <p class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($topup->created_at)->format('d M Y, H:i') }}</p>
-                            </div>
-                        </div>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold
-                            @if($topup->status === 'pending') bg-amber-100 text-amber-700
-                            @elseif($topup->status === 'approved') bg-green-100 text-green-700
-                            @else bg-red-100 text-red-700 @endif">
-                            @if($topup->status === 'pending')
-                                <i class="fas fa-clock mr-1.5"></i>Menunggu
-                            @elseif($topup->status === 'approved')
-                                <i class="fas fa-check mr-1.5"></i>Disetujui
-                            @else
-                                <i class="fas fa-times mr-1.5"></i>Ditolak
-                            @endif
+
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="font-bold text-white mb-4 flex items-center">
+                    <div class="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-shield-alt text-emerald-400"></i>
+                    </div>
+                    Keuntungan
+                </h3>
+                <ul class="space-y-3 text-sm text-slate-400">
+                    <li class="flex items-start p-2 rounded-lg hover:bg-white/5 transition-colors">
+                        <span class="w-5 h-5 bg-green-500/20 rounded-full flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
                         </span>
-                    </div>
-                @empty
-                    <div class="px-6 py-12 text-center text-gray-400">
-                        <i class="fas fa-inbox text-5xl mb-4"></i>
-                        <p class="text-lg font-medium">Belum ada riwayat top up</p>
-                        <p class="text-sm">Ajukan top up pertamamu!</p>
-                    </div>
-                @endforelse
+                        <span>Transaksi lebih cepat tanpa uang tunai</span>
+                    </li>
+                    <li class="flex items-start p-2 rounded-lg hover:bg-white/5 transition-colors">
+                        <span class="w-5 h-5 bg-green-500/20 rounded-full flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                        </span>
+                        <span>Riwayat transaksi tercatat dengan jelas</span>
+                    </li>
+                    <li class="flex items-start p-2 rounded-lg hover:bg-white/5 transition-colors">
+                        <span class="w-5 h-5 bg-green-500/20 rounded-full flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">
+                            <i class="fas fa-check text-green-400 text-xs"></i>
+                        </span>
+                        <span>Aman dan terpercaya</span>
+                    </li>
+                </ul>
             </div>
         </div>
-        
-        {{-- Info --}}
-        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
-            <div class="flex items-start">
-                <i class="fas fa-info-circle text-blue-500 mt-0.5 mr-3"></i>
-                <div class="text-sm text-blue-700">
-                    <p class="font-semibold mb-1">Cara Top Up Saldo:</p>
-                    <ol class="list-decimal list-inside space-y-1 text-blue-600">
-                        <li>Klik tombol "Top Up Saldo" dan pilih nominal</li>
-                        <li>Hubungi admin di kantin untuk pembayaran</li>
-                        <li>Setelah admin menyetujui, saldo otomatis bertambah</li>
-                    </ol>
-                </div>
+
+        {{-- Riwayat Top Up --}}
+        <div class="glass-card rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                <h3 class="font-bold text-white flex items-center">
+                    <i class="fas fa-history mr-2"></i> Riwayat Permintaan Top Up
+                </h3>
+            </div>
+            <div class="divide-y divide-slate-700/50">
+                @forelse($topupRequests ?? [] as $request)
+                    @php
+                        $statusConfig = [
+                            'pending' => ['bg' => 'bg-yellow-500/20', 'text' => 'text-yellow-400', 'icon' => 'fa-clock'],
+                            'approved' => ['bg' => 'bg-emerald-500/20', 'text' => 'text-emerald-400', 'icon' => 'fa-check-circle'],
+                            'rejected' => ['bg' => 'bg-red-500/20', 'text' => 'text-red-400', 'icon' => 'fa-times-circle'],
+                        ];
+                        $config = $statusConfig[$request->status] ?? $statusConfig['pending'];
+                    @endphp
+                    <div class="p-4 hover:bg-white/5 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 {{ $config['bg'] }} rounded-xl flex items-center justify-center mr-4">
+                                    <i class="fas {{ $config['icon'] }} {{ $config['text'] }}"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-orange-400">Rp {{ number_format($request->nominal, 0, ',', '.') }}</p>
+                                    <p class="text-sm text-slate-500">{{ $request->created_at->locale('id')->isoFormat('D MMM Y, HH:mm') }}</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 {{ $config['bg'] }} {{ $config['text'] }} rounded-lg text-sm font-medium">
+                                {{ ucfirst($request->status) }}
+                            </span>
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-8 text-center">
+                        <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-inbox text-2xl text-slate-600"></i>
+                        </div>
+                        <p class="text-slate-400">Belum ada permintaan top up</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>

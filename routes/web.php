@@ -52,6 +52,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaldoController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -124,6 +125,60 @@ Route::middleware('auth')->group(function () {
             Route::get('/saldo', [SaldoController::class, 'adminIndex'])->name('saldo.index');
             Route::patch('/saldo/{id}/approve', [SaldoController::class, 'approve'])->name('saldo.approve');
             Route::patch('/saldo/{id}/reject', [SaldoController::class, 'reject'])->name('saldo.reject');
+            Route::post('/saldo/{user}/topup', [SaldoController::class, 'adminTopup'])->name('saldo.topup');
+            
+            // Pengaturan Sistem (Settings)
+            Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+            Route::post('/settings/pajak', [SettingController::class, 'updatePajak'])->name('settings.pajak');
+            
+            // Kelola Penarikan Tunai
+            Route::get('/withdrawals', [AdminController::class, 'withdrawals'])->name('withdrawals.index');
+            Route::get('/withdrawals/{withdrawal}', [AdminController::class, 'showWithdrawal'])->name('withdrawals.show');
+            Route::patch('/withdrawals/{withdrawal}/approve', [AdminController::class, 'approveWithdrawal'])->name('withdrawals.approve');
+            Route::patch('/withdrawals/{withdrawal}/reject', [AdminController::class, 'rejectWithdrawal'])->name('withdrawals.reject');
+        });
+    
+    /*
+    |----------------------------------------------------------------------
+    | Kantin Routes (Penjaga Kantin)
+    |----------------------------------------------------------------------
+    | Prefix: /kantin
+    | Middleware: role:kantin
+    | Hanya user dengan role 'kantin' yang bisa mengakses
+    | 
+    | FITUR:
+    | - Dashboard dengan pesanan masuk
+    | - Menerima dan memproses pesanan
+    | - Laporan keuangan
+    | 
+    | ALUR STATUS (One-Way):
+    | pending -> diproses -> selesai
+    |                    -> batal
+    | Status TIDAK BISA dikembalikan ke sebelumnya
+    */
+    Route::prefix('kantin')
+        ->middleware('role:kantin')
+        ->name('kantin.')
+        ->group(function () {
+            
+            // Dashboard - Pesanan Masuk
+            Route::get('/dashboard', [\App\Http\Controllers\KantinController::class, 'dashboard'])->name('dashboard');
+            
+            // Daftar Semua Pesanan
+            Route::get('/orders', [\App\Http\Controllers\KantinController::class, 'orders'])->name('orders.index');
+            Route::get('/orders/{order}', [\App\Http\Controllers\KantinController::class, 'showOrder'])->name('orders.show');
+            
+            // Aksi Pesanan (One-Way Status Change)
+            Route::patch('/orders/{order}/accept', [\App\Http\Controllers\KantinController::class, 'acceptOrder'])->name('orders.accept');
+            Route::patch('/orders/{order}/complete', [\App\Http\Controllers\KantinController::class, 'completeOrder'])->name('orders.complete');
+            Route::patch('/orders/{order}/cancel', [\App\Http\Controllers\KantinController::class, 'cancelOrder'])->name('orders.cancel');
+            
+            // Laporan Keuangan
+            Route::get('/reports', [\App\Http\Controllers\KantinController::class, 'financialReport'])->name('reports');
+            
+            // Penarikan Tunai
+            Route::get('/withdrawals', [\App\Http\Controllers\KantinController::class, 'withdrawals'])->name('withdrawals.index');
+            Route::post('/withdrawals', [\App\Http\Controllers\KantinController::class, 'requestWithdrawal'])->name('withdrawals.store');
         });
     
     /*
@@ -131,11 +186,11 @@ Route::middleware('auth')->group(function () {
     | Siswa Routes
     |----------------------------------------------------------------------
     | Prefix: /siswa
-    | Middleware: role:siswa
-    | Hanya user dengan role 'siswa' yang bisa mengakses
+    | Middleware: role:siswa,kantin
+    | User dengan role 'siswa' atau 'kantin' bisa mengakses
     */
     Route::prefix('siswa')
-        ->middleware('role:siswa')
+        ->middleware('role:siswa,kantin')
         ->name('siswa.')
         ->group(function () {
             

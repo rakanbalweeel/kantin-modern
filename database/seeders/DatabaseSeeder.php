@@ -40,6 +40,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
@@ -66,6 +67,15 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@kantin.com',
             'password' => 'password',
             'role' => 'admin',
+        ]);
+        
+        // Penjaga Kantin (role: kantin)
+        // Bertugas menerima pesanan, memproses, dan melihat laporan keuangan
+        $penjagaKantin = User::create([
+            'name' => 'Penjaga Kantin',
+            'email' => 'kantin@kantin.com',
+            'password' => 'password',
+            'role' => 'kantin',
         ]);
         
         // Siswa Demo 1
@@ -95,7 +105,7 @@ class DatabaseSeeder extends Seeder
             'saldo' => 200000, // Saldo awal Rp 200.000
         ]);
         
-        $this->command->info('✅ Users berhasil dibuat: 1 Admin, 3 Siswa');
+        $this->command->info('✅ Users berhasil dibuat: 1 Admin, 1 Penjaga Kantin, 3 Siswa');
 
         // ==========================================================================
         // 2. CATEGORIES (Kategori Produk)
@@ -393,13 +403,37 @@ class DatabaseSeeder extends Seeder
         $this->command->info('✅ Orders berhasil dibuat: 5 Pesanan dengan berbagai status');
         
         // ==========================================================================
+        // 5. SETTINGS (Pengaturan Sistem)
+        // ==========================================================================
+        /**
+         * Pengaturan default sistem.
+         * Pajak default 15% bisa diubah oleh admin.
+         */
+        
+        Setting::set(
+            'pajak_persen',
+            15,
+            'Persentase Pajak',
+            'Persentase pajak yang akan dikenakan pada setiap transaksi'
+        );
+
+        Setting::set(
+            'pajak_withdrawal',
+            5,
+            'Pajak Penarikan',
+            'Persentase pajak yang dikenakan pada penarikan tunai kantin'
+        );
+        
+        $this->command->info('✅ Settings berhasil dibuat: Pajak Transaksi 15%, Pajak Withdrawal 5%');
+        
+        // ==========================================================================
         // RINGKASAN DATA
         // ==========================================================================
         $this->command->newLine();
         $this->command->info('=================================');
         $this->command->info('📊 RINGKASAN DATA DEMO');
         $this->command->info('=================================');
-        $this->command->info('👤 Users: ' . User::count() . ' (1 Admin, 3 Siswa)');
+        $this->command->info('👤 Users: ' . User::count() . ' (1 Admin, 1 Kantin, 3 Siswa)');
         $this->command->info('📁 Categories: ' . Category::count());
         $this->command->info('🍽️ Products: ' . Product::count());
         $this->command->info('📋 Orders: ' . Order::count());
@@ -407,6 +441,7 @@ class DatabaseSeeder extends Seeder
         $this->command->newLine();
         $this->command->info('🔑 AKUN LOGIN DEMO:');
         $this->command->info('   Admin: admin@kantin.com / password');
+        $this->command->info('   Kantin: kantin@kantin.com / password');
         $this->command->info('   Siswa: budi@siswa.com / password');
         $this->command->info('=================================');
     }

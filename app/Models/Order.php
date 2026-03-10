@@ -51,15 +51,22 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'kode_pesanan',
+        'subtotal',
+        'pajak_persen',
+        'pajak_nominal',
         'total',
         'status',
         'catatan',
+        'waktu_pengambilan',
     ];
 
     /**
      * Attribute Casting
      */
     protected $casts = [
+        'subtotal' => 'integer',
+        'pajak_persen' => 'decimal:2',
+        'pajak_nominal' => 'integer',
         'total' => 'integer',
         'created_at' => 'datetime',
     ];
@@ -71,6 +78,24 @@ class Order extends Model
     const STATUS_DIPROSES = 'diproses';
     const STATUS_SELESAI = 'selesai';
     const STATUS_BATAL = 'batal';
+
+    /**
+     * Waktu Pengambilan yang tersedia
+     */
+    const WAKTU_ISTIRAHAT_1 = 'istirahat_1';
+    const WAKTU_ISTIRAHAT_2 = 'istirahat_2';
+
+    /**
+     * Get label for waktu pengambilan
+     */
+    public function getWaktuPengambilanLabelAttribute(): string
+    {
+        return match($this->waktu_pengambilan) {
+            'istirahat_1' => 'Istirahat 1 (09:30 - 10:00)',
+            'istirahat_2' => 'Istirahat 2 (12:00 - 12:30)',
+            default => 'Istirahat 1 (09:30 - 10:00)',
+        };
+    }
 
     // ========================================================================
     // RELASI belongsTo: Order belongsTo User

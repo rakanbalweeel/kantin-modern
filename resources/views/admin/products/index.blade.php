@@ -1,14 +1,6 @@
 {{--
 ==========================================================================
-DAFTAR PRODUK (INDEX)
-==========================================================================
-Halaman ini menampilkan semua produk dalam bentuk tabel.
-Admin dapat menambah, edit, hapus produk, dan mengelola stok.
-
-PENJELASAN
-----------
-$products: Collection dari model Product (paginated) dengan eager loading category
-$product->category: Relasi belongsTo ke model Category
+DAFTAR PRODUK (INDEX) - DARK THEME
 ==========================================================================
 --}}
 
@@ -18,34 +10,27 @@ $product->category: Relasi belongsTo ke model Category
 
 @section('content')
 @php
-    $categoryStyles = [
-        'Makanan Berat' => ['icon' => 'fa-drumstick-bite', 'gradient' => 'from-orange-500 to-red-500', 'bg' => 'bg-orange-100', 'text' => 'text-orange-700'],
-        'Makanan Ringan' => ['icon' => 'fa-cookie-bite', 'gradient' => 'from-green-500 to-emerald-500', 'bg' => 'bg-green-100', 'text' => 'text-green-700'],
-        'Minuman' => ['icon' => 'fa-glass-water', 'gradient' => 'from-blue-500 to-cyan-500', 'bg' => 'bg-blue-100', 'text' => 'text-blue-700'],
-        'Snack' => ['icon' => 'fa-candy-cane', 'gradient' => 'from-pink-500 to-rose-500', 'bg' => 'bg-pink-100', 'text' => 'text-pink-700'],
-    ];
-    
     $totalProducts = $products->total();
     $lowStockCount = $products->filter(fn($p) => $p->stok <= 10 && $p->stok > 0)->count();
     $outOfStockCount = $products->filter(fn($p) => $p->stok <= 0)->count();
 @endphp
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
+<div class="min-h-screen hero-gradient py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Header Section --}}
         <div class="mb-8">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="flex items-center mb-4 md:mb-0">
-                    <div class="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200 mr-4">
+                    <div class="w-14 h-14 bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20 mr-4">
                         <i class="fas fa-utensils text-white text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Kelola Produk</h1>
-                        <p class="text-gray-500 mt-1">Daftar semua menu makanan dan minuman</p>
+                        <h1 class="text-3xl font-bold text-white">Kelola <span class="gradient-text">Produk</span></h1>
+                        <p class="text-slate-400 mt-1">Daftar semua menu makanan dan minuman</p>
                     </div>
                 </div>
                 <a href="{{ route('admin.products.create') }}" 
-                   class="group inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-200 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+                   class="group inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all duration-300">
                     <i class="fas fa-plus mr-2 group-hover:rotate-90 transition-transform duration-300"></i>
                     Tambah Produk
                 </a>
@@ -54,44 +39,44 @@ $product->category: Relasi belongsTo ke model Category
 
         {{-- Stats Cards --}}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-lg border border-white/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div class="glass-card rounded-2xl p-5 hover:bg-white/5 transition-all duration-300">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 mb-1">Total Produk</p>
-                        <p class="text-2xl font-bold text-gray-800">{{ $totalProducts }}</p>
+                        <p class="text-sm text-slate-400 mb-1">Total Produk</p>
+                        <p class="text-2xl font-bold text-white">{{ $totalProducts }}</p>
                     </div>
-                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center">
                         <i class="fas fa-boxes-stacked text-white"></i>
                     </div>
                 </div>
             </div>
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-lg border border-white/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div class="glass-card rounded-2xl p-5 hover:bg-white/5 transition-all duration-300">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 mb-1">Stok Tersedia</p>
-                        <p class="text-2xl font-bold text-emerald-600">{{ $totalProducts - $lowStockCount - $outOfStockCount }}</p>
+                        <p class="text-sm text-slate-400 mb-1">Stok Tersedia</p>
+                        <p class="text-2xl font-bold text-emerald-400">{{ $totalProducts - $lowStockCount - $outOfStockCount }}</p>
                     </div>
                     <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center">
                         <i class="fas fa-check-circle text-white"></i>
                     </div>
                 </div>
             </div>
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-lg border border-white/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div class="glass-card rounded-2xl p-5 hover:bg-white/5 transition-all duration-300">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 mb-1">Stok Menipis</p>
-                        <p class="text-2xl font-bold text-amber-600">{{ $lowStockCount }}</p>
+                        <p class="text-sm text-slate-400 mb-1">Stok Menipis</p>
+                        <p class="text-2xl font-bold text-amber-400">{{ $lowStockCount }}</p>
                     </div>
                     <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center">
                         <i class="fas fa-exclamation-triangle text-white"></i>
                     </div>
                 </div>
             </div>
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-lg border border-white/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div class="glass-card rounded-2xl p-5 hover:bg-white/5 transition-all duration-300">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500 mb-1">Stok Habis</p>
-                        <p class="text-2xl font-bold text-red-600">{{ $outOfStockCount }}</p>
+                        <p class="text-sm text-slate-400 mb-1">Stok Habis</p>
+                        <p class="text-2xl font-bold text-red-400">{{ $outOfStockCount }}</p>
                     </div>
                     <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center">
                         <i class="fas fa-times-circle text-white"></i>
@@ -100,149 +85,73 @@ $product->category: Relasi belongsTo ke model Category
             </div>
         </div>
 
-        {{-- Filters Card --}}
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-6 mb-6">
-            <form action="{{ route('admin.products.index') }}" method="GET" class="flex flex-wrap gap-4 items-end">
-                <div class="flex-1 min-w-[250px]">
-                    <label class="text-sm font-medium text-gray-600 mb-2 block">Cari Produk</label>
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" 
-                               placeholder="Nama atau kode produk..."
-                               class="w-full pl-11 pr-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200">
-                    </div>
-                </div>
-                <div class="w-56">
-                    <label class="text-sm font-medium text-gray-600 mb-2 block">Kategori</label>
-                    <select name="category" class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all duration-200 appearance-none cursor-pointer">
-                        <option value="">Semua Kategori</option>
-                        @foreach($categories ?? [] as $cat)
-                            <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
-                                {{ $cat->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center">
-                    <i class="fas fa-filter mr-2"></i>
-                    Filter
-                </button>
-                @if(request()->hasAny(['search', 'category']))
-                    <a href="{{ route('admin.products.index') }}" class="px-6 py-3 bg-gray-100 text-gray-600 font-medium rounded-xl hover:bg-gray-200 transition-all duration-200 flex items-center">
-                        <i class="fas fa-times mr-2"></i>
-                        Reset
-                    </a>
-                @endif
-            </form>
-        </div>
-
-        {{-- Table Card --}}
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 overflow-hidden">
+        {{-- Products Table --}}
+        <div class="glass-card rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
+                <h2 class="text-lg font-bold text-white flex items-center">
+                    <i class="fas fa-list mr-2"></i> Daftar Produk
+                </h2>
+            </div>
+            
             <div class="overflow-x-auto">
                 <table class="min-w-full">
                     <thead>
-                        <tr class="bg-gradient-to-r from-indigo-600 to-purple-600">
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                                <i class="fas fa-box mr-2"></i>Produk
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                                <i class="fas fa-tag mr-2"></i>Kategori
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                                <i class="fas fa-money-bill mr-2"></i>Harga
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                                <i class="fas fa-cubes mr-2"></i>Stok
-                            </th>
-                            <th class="px-6 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider">
-                                <i class="fas fa-cog mr-2"></i>Aksi
-                            </th>
+                        <tr class="bg-slate-800/50">
+                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase">Produk</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase">Kategori</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase">Harga</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-400 uppercase">Stok</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold text-slate-400 uppercase">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-slate-700/50">
                         @forelse($products as $product)
-                            @php
-                                $style = $categoryStyles[$product->category->nama] ?? ['icon' => 'fa-utensils', 'gradient' => 'from-gray-500 to-gray-600', 'bg' => 'bg-gray-100', 'text' => 'text-gray-700'];
-                            @endphp
-                            <tr class="hover:bg-indigo-50/50 transition-colors duration-200">
-                                <td class="px-6 py-4 whitespace-nowrap">
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="px-6 py-4">
                                     <div class="flex items-center">
                                         @if($product->gambar)
-                                            <img src="{{ Storage::url($product->gambar) }}" 
-                                                 alt="{{ $product->nama }}"
-                                                 class="w-14 h-14 rounded-xl object-cover shadow-md border-2 border-white">
+                                            <img src="{{ asset('storage/' . $product->gambar) }}" alt="{{ $product->nama }}" class="w-12 h-12 rounded-xl object-cover mr-4 border border-slate-700">
                                         @else
-                                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br {{ $style['gradient'] }} flex items-center justify-center shadow-md">
-                                                <i class="fas {{ $style['icon'] }} text-white text-lg"></i>
+                                            <div class="w-12 h-12 bg-slate-700 rounded-xl flex items-center justify-center mr-4">
+                                                <i class="fas fa-image text-slate-500"></i>
                                             </div>
                                         @endif
-                                        <div class="ml-4">
-                                            <p class="text-sm font-bold text-gray-800">{{ $product->nama }}</p>
-                                            <p class="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-0.5 rounded mt-1 inline-block">{{ $product->kode }}</p>
+                                        <div>
+                                            <p class="font-semibold text-white">{{ $product->nama }}</p>
+                                            <p class="text-xs text-slate-500">{{ Str::limit($product->deskripsi, 30) }}</p>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold {{ $style['bg'] }} {{ $style['text'] }}">
-                                        <i class="fas {{ $style['icon'] }} mr-1.5 text-xs"></i>
-                                        {{ $product->category->nama }}
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-lg text-sm border border-orange-500/30">
+                                        {{ $product->category->nama ?? '-' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                                        Rp {{ number_format($product->harga, 0, ',', '.') }}
-                                    </span>
+                                <td class="px-6 py-4">
+                                    <span class="font-bold text-orange-400">Rp {{ number_format($product->harga, 0, ',', '.') }}</span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4 text-center">
                                     @if($product->stok <= 0)
-                                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">
-                                            <i class="fas fa-times-circle mr-1.5"></i>Habis
-                                        </span>
+                                        <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded-lg text-sm border border-red-500/30">Habis</span>
                                     @elseif($product->stok <= 10)
-                                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
-                                            <i class="fas fa-exclamation-triangle mr-1.5"></i>{{ $product->stok }} tersisa
-                                        </span>
+                                        <span class="px-3 py-1 bg-amber-500/20 text-amber-400 rounded-lg text-sm border border-amber-500/30">{{ $product->stok }}</span>
                                     @else
-                                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
-                                            <i class="fas fa-check-circle mr-1.5"></i>{{ $product->stok }} tersedia
-                                        </span>
+                                        <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-lg text-sm border border-emerald-500/30">{{ $product->stok }}</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center justify-center space-x-1">
-                                        {{-- Update Stock Button --}}
-                                        <button type="button" 
-                                                onclick="openStockModal({{ $product->id }}, '{{ $product->nama }}', {{ $product->stok }})"
-                                                class="w-9 h-9 bg-emerald-100 text-emerald-600 rounded-lg hover:bg-emerald-200 hover:scale-110 transition-all duration-200 flex items-center justify-center" 
-                                                title="Update Stok">
-                                            <i class="fas fa-boxes-stacked text-sm"></i>
-                                        </button>
-                                        
-                                        {{-- View Button --}}
-                                        <a href="{{ route('admin.products.show', $product) }}" 
-                                           class="w-9 h-9 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 hover:scale-110 transition-all duration-200 flex items-center justify-center" 
-                                           title="Lihat">
-                                            <i class="fas fa-eye text-sm"></i>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        <a href="{{ route('admin.products.show', $product) }}" class="w-10 h-10 inline-flex items-center justify-center bg-slate-700 hover:bg-blue-500 text-slate-300 hover:text-white rounded-xl transition-all" title="Detail">
+                                            <i class="fas fa-eye"></i>
                                         </a>
-                                        
-                                        {{-- Edit Button --}}
-                                        <a href="{{ route('admin.products.edit', $product) }}" 
-                                           class="w-9 h-9 bg-indigo-100 text-indigo-600 rounded-lg hover:bg-indigo-200 hover:scale-110 transition-all duration-200 flex items-center justify-center" 
-                                           title="Edit">
-                                            <i class="fas fa-edit text-sm"></i>
+                                        <a href="{{ route('admin.products.edit', $product) }}" class="w-10 h-10 inline-flex items-center justify-center bg-slate-700 hover:bg-amber-500 text-slate-300 hover:text-white rounded-xl transition-all" title="Edit">
+                                            <i class="fas fa-edit"></i>
                                         </a>
-                                        
-                                        {{-- Delete Form --}}
-                                        <form action="{{ route('admin.products.destroy', $product) }}" 
-                                              method="POST" 
-                                              class="inline"
-                                              onsubmit="return confirm('Yakin ingin menghapus produk {{ $product->nama }}?')">
+                                        <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" 
-                                                    class="w-9 h-9 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 hover:scale-110 transition-all duration-200 flex items-center justify-center" 
-                                                    title="Hapus">
-                                                <i class="fas fa-trash-alt text-sm"></i>
+                                            <button type="submit" class="w-10 h-10 inline-flex items-center justify-center bg-slate-700 hover:bg-red-500 text-slate-300 hover:text-white rounded-xl transition-all" title="Hapus">
+                                                <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -250,112 +159,25 @@ $product->category: Relasi belongsTo ke model Category
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-16 text-center">
-                                    <div class="flex flex-col items-center">
-                                        <div class="w-20 h-20 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center mb-4">
-                                            <i class="fas fa-utensils text-gray-400 text-3xl"></i>
-                                        </div>
-                                        <p class="text-lg font-semibold text-gray-600 mb-2">Belum Ada Produk</p>
-                                        <p class="text-gray-400 mb-4">Mulai dengan menambahkan produk pertama</p>
-                                        <a href="{{ route('admin.products.create') }}" 
-                                           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-200 transition-all duration-300">
-                                            <i class="fas fa-plus mr-2"></i>
-                                            Tambah Produk
-                                        </a>
+                                <td colspan="5" class="px-6 py-12 text-center">
+                                    <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-box-open text-2xl text-slate-600"></i>
                                     </div>
+                                    <p class="text-slate-400 font-medium">Belum ada produk</p>
+                                    <a href="{{ route('admin.products.create') }}" class="text-orange-400 hover:underline mt-2 inline-block">Tambah produk pertama</a>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-
-            {{-- Pagination --}}
+            
             @if($products->hasPages())
-                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50">
-                    {{ $products->withQueryString()->links() }}
+                <div class="px-6 py-4 border-t border-slate-700">
+                    {{ $products->links() }}
                 </div>
             @endif
         </div>
     </div>
 </div>
-
-{{-- Stock Update Modal Modern --}}
-<div id="stockModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden transform transition-all">
-        {{-- Modal Header --}}
-        <div class="bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-4">
-            <div class="flex items-center">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mr-3">
-                    <i class="fas fa-boxes-stacked text-white"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-white">Update Stok</h3>
-                    <p id="stockProductName" class="text-emerald-100 text-sm"></p>
-                </div>
-            </div>
-        </div>
-        
-        <form id="stockForm" method="POST" class="p-6">
-            @csrf
-            @method('PATCH')
-            
-            <div class="mb-5">
-                <label class="flex items-center text-sm font-semibold text-gray-700 mb-2">
-                    <span class="w-6 h-6 bg-gray-200 rounded-md flex items-center justify-center mr-2">
-                        <i class="fas fa-box text-gray-500 text-xs"></i>
-                    </span>
-                    Stok Saat Ini
-                </label>
-                <input type="text" id="currentStock" 
-                       class="w-full px-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-xl text-gray-600 font-semibold" 
-                       readonly>
-            </div>
-            
-            <div class="mb-6">
-                <label for="newStock" class="flex items-center text-sm font-semibold text-gray-700 mb-2">
-                    <span class="w-6 h-6 bg-emerald-100 rounded-md flex items-center justify-center mr-2">
-                        <i class="fas fa-edit text-emerald-600 text-xs"></i>
-                    </span>
-                    Stok Baru
-                </label>
-                <input type="number" name="stok" id="newStock" min="0" required
-                       class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 transition-all duration-200 font-semibold text-gray-800">
-            </div>
-            
-            <div class="flex space-x-3">
-                <button type="button" onclick="closeStockModal()" 
-                        class="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-all duration-200">
-                    Batal
-                </button>
-                <button type="submit" 
-                        class="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-green-700 shadow-lg shadow-emerald-200 transition-all duration-200 flex items-center justify-center">
-                    <i class="fas fa-save mr-2"></i>
-                    Update Stok
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script>
-function openStockModal(productId, productName, currentStock) {
-    document.getElementById('stockModal').classList.remove('hidden');
-    document.getElementById('stockModal').classList.add('flex');
-    document.getElementById('stockProductName').textContent = productName;
-    document.getElementById('currentStock').value = currentStock;
-    document.getElementById('newStock').value = currentStock;
-    document.getElementById('stockForm').action = `/admin/products/${productId}/stock`;
-}
-
-function closeStockModal() {
-    document.getElementById('stockModal').classList.add('hidden');
-    document.getElementById('stockModal').classList.remove('flex');
-}
-
-// Close modal on background click
-document.getElementById('stockModal').addEventListener('click', function(e) {
-    if (e.target === this) closeStockModal();
-});
-</script>
 @endsection

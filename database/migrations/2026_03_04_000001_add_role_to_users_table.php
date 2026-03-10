@@ -13,11 +13,12 @@
  * - Role digunakan untuk pembatasan akses (authorization)
  * 
  * KOLOM YANG DITAMBAHKAN:
- * - role: enum('admin', 'siswa') dengan default 'siswa'
+ * - role: enum('admin', 'kantin', 'siswa') dengan default 'siswa'
  * 
  * ALUR KERJA:
  * 1. User baru register → otomatis jadi 'siswa'
  * 2. Admin dibuat manual melalui seeder atau ubah di database
+ * 3. Kantin (penjaga kantin) dibuat melalui seeder
  * ============================================================================
  */
 
@@ -35,9 +36,9 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Menambahkan kolom role setelah kolom email
-            // enum() membatasi nilai yang valid hanya 'admin' atau 'siswa'
+            // enum() membatasi nilai yang valid hanya 'admin', 'kantin', atau 'siswa'
             // default('siswa') berarti jika tidak diisi, otomatis jadi siswa
-            $table->enum('role', ['admin', 'siswa'])->default('siswa')->after('email');
+            $table->enum('role', ['admin', 'kantin', 'siswa'])->default('siswa')->after('email');
         });
     }
 

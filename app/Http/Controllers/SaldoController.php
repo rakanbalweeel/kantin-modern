@@ -66,13 +66,27 @@ class SaldoController extends Controller
      */
     public function adminIndex()
     {
+        // Topup requests with user data
         $requests = DB::table('topup_requests')
             ->join('users', 'topup_requests.user_id', '=', 'users.id')
             ->select('topup_requests.*', 'users.name', 'users.email')
             ->orderBy('topup_requests.created_at', 'desc')
             ->paginate(20);
+        
+        // Students list with saldo
+        $students = User::where('role', 'siswa')
+            ->orderBy('name')
+            ->paginate(20, ['*'], 'students_page');
+        
+        // Count pending topups
+        $pendingTopups = DB::table('topup_requests')
+            ->where('status', 'pending')
+            ->count();
+        
+        // Total saldo siswa
+        $totalSaldo = User::where('role', 'siswa')->sum('saldo');
             
-        return view('admin.saldo.index', compact('requests'));
+        return view('admin.saldo.index', compact('requests', 'students', 'pendingTopups', 'totalSaldo'));
     }
 
     /**
@@ -132,5 +146,46 @@ class SaldoController extends Controller
             ]);
 
         return back()->with('success', 'Request top up ditolak.');
+    }
+
+    /**
+     * [ADMIN] Top up saldo siswa langsung
+     */
+    public function adminTopup(Request $request, User $user)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1000|max:10000000',
+        ], [
+            'amount.required' => 'Jumlah top up harus diisi',
+            'amount.min' => 'Minimal top up Rp 1.000',
+            'amount.max' => 'Maksimal top up Rp 10.000.000',
+        ]);
+
+        if ($user->role !== 'siswa') {
+            return back()->with('error', 'Hanya bisa top up untuk siswa');
+        }
+
+        DB::beginTransaction();
+        try {
+            // Tambah saldo user
+            $user->increment('saldo', $request->amount);
+
+            // Catat di topup_requests sebagai approved langsung
+            DB::table('topup_requests')->insert([
+                'user_id' => $user->id,
+                'jumlah' => $request->amount,
+                'status' => 'approved',
+                'approved_at' => now(),
+                'approved_by' => Auth::id(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+            return back()->with('success', "Berhasil top up Rp " . number_format($request->amount, 0, ',', '.') . " ke saldo {$user->name}");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal top up: ' . $e->getMessage());
+        }
     }
 }

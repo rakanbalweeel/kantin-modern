@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * ============================================================================
+ * MIGRATION: Create Settings Table
+ * ============================================================================
+ * 
+ * PENJELASAN:
+ * Tabel untuk menyimpan konfigurasi sistem seperti persentase pajak.
+ * Menggunakan key-value pair agar fleksibel untuk setting lainnya.
+ * ============================================================================
+ */
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('settings', function (Blueprint $table) {
+            $table->id();
+            $table->string('key')->unique();          // Kunci setting (misal: 'pajak_persen')
+            $table->text('value');                     // Nilai setting
+            $table->string('label')->nullable();       // Label untuk ditampilkan di UI
+            $table->string('description')->nullable(); // Deskripsi setting
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('settings');
+    }
+};

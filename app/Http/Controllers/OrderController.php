@@ -29,6 +29,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\OrderDetail;
+use App\Models\Setting;
 use App\Http\Requests\StoreOrderRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -68,7 +69,8 @@ class OrderController extends Controller
      */
     public function cart()
     {
-        return view('siswa.cart');
+        $pajak_persen = Setting::getPajakPersen();
+        return view('siswa.cart', compact('pajak_persen'));
     }
 
     /**
@@ -93,6 +95,7 @@ class OrderController extends Controller
     {
         $items = $request->validated()['items'];
         $catatan = $request->validated()['catatan'] ?? null;
+        $waktuPengambilan = $request->validated()['waktu_pengambilan'] ?? 'istirahat_1';
 
         // Validasi stok untuk setiap item
         $errors = [];
@@ -122,25 +125,39 @@ class OrderController extends Controller
 
         // Gunakan DB Transaction untuk atomicity
         try {
-            $order = DB::transaction(function () use ($items, $catatan) {
-                // 1. Buat order baru
+            $order = DB::transaction(function () use ($items, $catatan, $waktuPengambilan) {
+                // 1. Hitung subtotal terlebih dahulu
+                $subtotal = 0;
+
+                // Pre-calculate subtotal
+                foreach ($items as $item) {
+                    $product = Product::find($item['product_id']);
+                    $subtotal += $product->harga * $item['jumlah'];
+                }
+
+                // 2. Hitung pajak dari setting
+                $pajak = Setting::hitungPajak($subtotal);
+                $total = $subtotal + $pajak['nominal'];
+
+                // 3. Buat order baru dengan informasi pajak
                 $order = Order::create([
                     'user_id' => Auth::id(),
                     'kode_pesanan' => Order::generateKodePesanan(),
-                    'total' => 0, // Akan dihitung dari detail
+                    'subtotal' => $subtotal,
+                    'pajak_persen' => $pajak['persen'],
+                    'pajak_nominal' => $pajak['nominal'],
+                    'total' => $total,
                     'status' => Order::STATUS_PENDING,
                     'catatan' => $catatan,
+                    'waktu_pengambilan' => $waktuPengambilan,
                 ]);
 
-                $total = 0;
-
-                // 2. Buat detail pesanan untuk setiap item
+                // 4. Buat detail pesanan untuk setiap item
                 foreach ($items as $item) {
                     $product = Product::find($item['product_id']);
                     
-                    // Hitung subtotal
-                    $subtotal = $product->harga * $item['jumlah'];
-                    $total += $subtotal;
+                    // Hitung subtotal item
+                    $itemSubtotal = $product->harga * $item['jumlah'];
 
                     // Buat detail pesanan
                     OrderDetail::create([
@@ -148,15 +165,12 @@ class OrderController extends Controller
                         'product_id' => $product->id,
                         'jumlah' => $item['jumlah'],
                         'harga' => $product->harga, // Simpan harga saat ini
-                        'subtotal' => $subtotal,
+                        'subtotal' => $itemSubtotal,
                     ]);
 
-                    // 3. Kurangi stok produk
+                    // 5. Kurangi stok produk
                     $product->decreaseStock($item['jumlah']);
                 }
-
-                // 4. Update total order
-                $order->update(['total' => $total]);
 
                 return $order;
             });

@@ -1,14 +1,8 @@
 {{--
 ==========================================================================
-HALAMAN CHECKOUT / CART - SISWA
+HALAMAN CHECKOUT / CART - SISWA (Dark Theme)
 ==========================================================================
-Halaman ini menampilkan ringkasan keranjang belanja sebelum checkout.
-Siswa bisa mereview pesanan, menambah catatan, dan konfirmasi pesanan.
-
-PENJELASAN
-----------
-Data cart diambil dari localStorage (disimpan oleh halaman menu).
-Form akan mengirim data ke OrderController@store untuk memproses pesanan.
+Modern dark theme matching landing page design
 ==========================================================================
 --}}
 
@@ -20,7 +14,9 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
 <div x-data="{
     cart: JSON.parse(localStorage.getItem('kantin_cart') || '[]'),
     catatan: '',
+    waktuPengambilan: 'istirahat_1',
     loading: false,
+    pajakPersen: {{ $pajak_persen ?? 0 }},
     
     removeFromCart(productId) {
         this.cart = this.cart.filter(item => item.id !== productId);
@@ -41,6 +37,7 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
     
     saveCart() {
         localStorage.setItem('kantin_cart', JSON.stringify(this.cart));
+        window.dispatchEvent(new CustomEvent('cart-updated'));
     },
     
     clearCart() {
@@ -48,8 +45,16 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
         localStorage.removeItem('kantin_cart');
     },
     
-    getTotal() {
+    getSubtotal() {
         return this.cart.reduce((total, item) => total + (item.harga * item.qty), 0);
+    },
+    
+    getPajak() {
+        return Math.round(this.getSubtotal() * this.pajakPersen / 100);
+    },
+    
+    getTotal() {
+        return this.getSubtotal() + this.getPajak();
     },
     
     getTotalItems() {
@@ -83,7 +88,8 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
                 },
                 body: JSON.stringify({
                     items: items,
-                    catatan: this.catatan
+                    catatan: this.catatan,
+                    waktu_pengambilan: this.waktuPengambilan
                 })
             });
             
@@ -102,16 +108,14 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
         
         this.loading = false;
     }
-}">
+}" class="py-8">
 
-<div class="py-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {{-- Header Section --}}
         <div class="mb-8">
             <a href="{{ route('siswa.menu') }}" 
-               class="inline-flex items-center text-gray-500 hover:text-indigo-600 transition-colors duration-200 mb-6 group">
-                <div class="w-8 h-8 rounded-lg bg-white shadow-sm border border-gray-200 flex items-center justify-center mr-3 group-hover:border-indigo-300 group-hover:shadow-md transition-all duration-200">
+               class="inline-flex items-center text-slate-400 hover:text-orange-400 transition-colors duration-200 mb-6 group">
+                <div class="w-8 h-8 rounded-lg glass flex items-center justify-center mr-3 group-hover:bg-orange-500/20 transition-all duration-200">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                     </svg>
@@ -121,29 +125,27 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
             
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="flex items-center space-x-4">
-                    <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
+                    <div class="w-14 h-14 bg-gradient-to-br from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30">
                         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-3xl font-bold bg-gradient-to-r from-gray-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent">
-                            Checkout
+                        <h1 class="text-3xl font-bold text-white">
+                            Check<span class="text-orange-500">out</span>
                         </h1>
-                        <p class="text-gray-500 mt-0.5">Review pesanan sebelum konfirmasi</p>
+                        <p class="text-slate-400 mt-0.5">Review pesanan sebelum konfirmasi</p>
                     </div>
                 </div>
                 
                 {{-- Cart Summary Badge --}}
                 <div class="mt-4 md:mt-0" x-show="cart.length > 0">
-                    <div class="inline-flex items-center space-x-3 bg-white/80 backdrop-blur-sm rounded-2xl px-5 py-3 shadow-sm border border-indigo-100">
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                            </svg>
-                            <span class="text-sm text-gray-500">Total Item:</span>
-                            <span class="font-bold text-indigo-600" x-text="getTotalItems()"></span>
-                        </div>
+                    <div class="inline-flex items-center space-x-3 glass rounded-2xl px-5 py-3">
+                        <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        <span class="text-sm text-slate-400">Total Item:</span>
+                        <span class="font-bold text-orange-400" x-text="getTotalItems()"></span>
                     </div>
                 </div>
             </div>
@@ -151,18 +153,18 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
 
         {{-- Empty Cart --}}
         <template x-if="cart.length === 0">
-            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-12 text-center max-w-lg mx-auto">
-                <div class="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center">
-                    <svg class="w-16 h-16 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="glass-card rounded-3xl p-12 text-center max-w-lg mx-auto">
+                <div class="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-orange-500/20 to-amber-500/20 rounded-full flex items-center justify-center">
+                    <svg class="w-16 h-16 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Keranjang Kosong</h2>
-                <p class="text-gray-500 mb-8 max-w-sm mx-auto">
+                <h2 class="text-2xl font-bold text-white mb-2">Keranjang Kosong</h2>
+                <p class="text-slate-400 mb-8 max-w-sm mx-auto">
                     Belum ada produk di keranjang. Yuk pilih makanan favoritmu!
                 </p>
                 <a href="{{ route('siswa.menu') }}" 
-                   class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-xl shadow-indigo-200 hover:shadow-2xl hover:shadow-indigo-300 hover:-translate-y-1">
+                   class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-2xl font-semibold shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-1 transition-all duration-300">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                     </svg>
@@ -177,8 +179,8 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
                 {{-- Cart Items --}}
                 <div class="lg:col-span-2 space-y-6">
                     {{-- Items Card --}}
-                    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                        <div class="bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-4">
+                    <div class="glass-card rounded-2xl overflow-hidden">
+                        <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
@@ -192,56 +194,55 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
                             </div>
                         </div>
                         
-                        <div class="divide-y divide-gray-100">
+                        <div class="divide-y divide-white/10">
                             <template x-for="(item, index) in cart" :key="item.id">
-                                <div class="p-5 hover:bg-gradient-to-r hover:from-gray-50 hover:to-indigo-50/30 transition-all duration-300"
-                                     :style="'animation: fadeInUp 0.4s ease-out ' + (index * 0.1) + 's both'">
+                                <div class="p-5 hover:bg-white/5 transition-all duration-300">
                                     <div class="flex items-start justify-between">
                                         <div class="flex items-start space-x-4 flex-1">
                                             {{-- Product Image Placeholder --}}
-                                            <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center flex-shrink-0 ring-2 ring-white shadow-sm">
-                                                <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 flex items-center justify-center flex-shrink-0">
+                                                <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                                 </svg>
                                             </div>
                                             
                                             <div class="flex-1">
-                                                <h3 class="font-bold text-gray-900 text-lg" x-text="item.nama"></h3>
-                                                <p class="text-gray-500 mt-1" x-text="'Rp ' + formatRupiah(item.harga) + ' / item'"></p>
+                                                <h3 class="font-bold text-white text-lg" x-text="item.nama"></h3>
+                                                <p class="text-slate-400 mt-1" x-text="'Rp ' + formatRupiah(item.harga) + ' / item'"></p>
                                                 
                                                 {{-- Quantity Controls --}}
                                                 <div class="flex items-center mt-3 space-x-3">
-                                                    <div class="flex items-center bg-gray-100 rounded-xl p-1">
+                                                    <div class="flex items-center glass rounded-xl p-1">
                                                         <button @click="updateQty(item.id, item.qty - 1)" 
-                                                                class="w-9 h-9 rounded-lg bg-white shadow-sm flex items-center justify-center text-gray-600 hover:text-indigo-600 hover:shadow-md transition-all duration-200">
+                                                                class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-slate-400 hover:text-orange-400 hover:bg-orange-500/20 transition-all duration-200">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
                                                             </svg>
                                                         </button>
-                                                        <span class="w-12 text-center font-bold text-gray-900" x-text="item.qty"></span>
+                                                        <span class="w-12 text-center font-bold text-white" x-text="item.qty"></span>
                                                         <button @click="updateQty(item.id, item.qty + 1)"
                                                                 :disabled="item.qty >= item.stok"
-                                                                class="w-9 h-9 rounded-lg bg-white shadow-sm flex items-center justify-center text-gray-600 hover:text-indigo-600 hover:shadow-md transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed">
+                                                                class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-slate-400 hover:text-orange-400 hover:bg-orange-500/20 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                                             </svg>
                                                         </button>
                                                     </div>
-                                                    <span class="text-xs text-gray-400" x-text="'Stok: ' + item.stok"></span>
+                                                    <span class="text-xs text-slate-500" x-text="'Stok: ' + item.stok"></span>
                                                 </div>
                                             </div>
                                         </div>
                                         
                                         <div class="flex flex-col items-end space-y-3 ml-4">
                                             <button @click="removeFromCart(item.id)" 
-                                                    class="w-9 h-9 rounded-xl bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 hover:text-red-600 transition-all duration-200">
+                                                    class="w-9 h-9 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center hover:bg-red-500/30 transition-all duration-200">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                 </svg>
                                             </button>
                                             <div class="text-right">
-                                                <p class="text-xs text-gray-400 uppercase tracking-wider">Subtotal</p>
-                                                <span class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent" 
+                                                <p class="text-xs text-slate-500 uppercase tracking-wider">Subtotal</p>
+                                                <span class="text-xl font-bold text-orange-400" 
                                                       x-text="'Rp ' + formatRupiah(item.harga * item.qty)"></span>
                                             </div>
                                         </div>
@@ -252,17 +253,17 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
                     </div>
 
                     {{-- Catatan Card --}}
-                    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-indigo-50/30">
+                    <div class="glass-card rounded-2xl overflow-hidden">
+                        <div class="px-6 py-4 border-b border-white/10">
                             <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-400 rounded-xl flex items-center justify-center shadow-lg shadow-amber-200">
+                                <div class="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
                                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-gray-900">Catatan Pesanan</h3>
-                                    <p class="text-sm text-gray-500">Opsional - tambahkan permintaan khusus</p>
+                                    <h3 class="font-bold text-white">Catatan Pesanan</h3>
+                                    <p class="text-sm text-slate-400">Opsional - tambahkan permintaan khusus</p>
                                 </div>
                             </div>
                         </div>
@@ -270,18 +271,97 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
                             <textarea 
                                 x-model="catatan"
                                 rows="3"
-                                class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition-all duration-200 resize-none"
+                                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 resize-none text-white placeholder-slate-500"
                                 placeholder="Contoh: Tidak pakai sambal, tambah sayur, pedas level 2, dll..."
                             ></textarea>
+                        </div>
+                    </div>
+
+                    {{-- Waktu Pengambilan Card --}}
+                    <div class="glass-card rounded-2xl overflow-hidden">
+                        <div class="px-6 py-4 border-b border-white/10">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-white">Waktu Pengambilan</h3>
+                                    <p class="text-sm text-slate-400">Pilih waktu untuk mengambil pesanan</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {{-- Istirahat 1 --}}
+                                <label class="relative cursor-pointer group">
+                                    <input type="radio" name="waktu_pengambilan" value="istirahat_1" x-model="waktuPengambilan" class="peer sr-only">
+                                    <div class="p-4 rounded-xl border-2 transition-all duration-300
+                                                border-white/10 bg-white/5
+                                                peer-checked:border-blue-500 peer-checked:bg-blue-500/10
+                                                group-hover:border-white/20 group-hover:bg-white/10">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-bold text-white">Istirahat 1</span>
+                                            <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center
+                                                        border-white/30 peer-checked:border-blue-500
+                                                        transition-all duration-300">
+                                                <div class="w-2.5 h-2.5 rounded-full bg-blue-500 scale-0 peer-checked:scale-100 transition-transform duration-300"
+                                                     :class="waktuPengambilan === 'istirahat_1' ? 'scale-100' : 'scale-0'"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center text-sm text-slate-400">
+                                            <svg class="w-4 h-4 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            09:30 - 10:00
+                                        </div>
+                                    </div>
+                                </label>
+
+                                {{-- Istirahat 2 --}}
+                                <label class="relative cursor-pointer group">
+                                    <input type="radio" name="waktu_pengambilan" value="istirahat_2" x-model="waktuPengambilan" class="peer sr-only">
+                                    <div class="p-4 rounded-xl border-2 transition-all duration-300
+                                                border-white/10 bg-white/5
+                                                peer-checked:border-purple-500 peer-checked:bg-purple-500/10
+                                                group-hover:border-white/20 group-hover:bg-white/10">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-bold text-white">Istirahat 2</span>
+                                            <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center
+                                                        border-white/30 peer-checked:border-purple-500
+                                                        transition-all duration-300">
+                                                <div class="w-2.5 h-2.5 rounded-full bg-purple-500 scale-0 peer-checked:scale-100 transition-transform duration-300"
+                                                     :class="waktuPengambilan === 'istirahat_2' ? 'scale-100' : 'scale-0'"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center text-sm text-slate-400">
+                                            <svg class="w-4 h-4 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            12:00 - 12:30
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            <div class="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+                                <p class="text-sm text-blue-400 flex items-start">
+                                    <svg class="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>Pesanan akan disiapkan dan siap diambil pada waktu istirahat yang kamu pilih.</span>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {{-- Order Summary Sidebar --}}
                 <div class="lg:col-span-1">
-                    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 sticky top-24 overflow-hidden">
+                    <div class="glass-card rounded-2xl sticky top-24 overflow-hidden">
                         {{-- Summary Header --}}
-                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-5">
+                        <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-5">
                             <div class="flex items-center space-x-3">
                                 <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
                                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -295,40 +375,60 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
                         {{-- Items Summary --}}
                         <div class="p-6 space-y-4 max-h-64 overflow-y-auto">
                             <template x-for="item in cart" :key="item.id">
-                                <div class="flex justify-between items-start py-2 border-b border-gray-100 last:border-0">
+                                <div class="flex justify-between items-start py-2 border-b border-white/10 last:border-0">
                                     <div class="flex-1">
-                                        <p class="font-medium text-gray-900 text-sm" x-text="item.nama"></p>
-                                        <p class="text-xs text-gray-400 mt-0.5" x-text="item.qty + ' × Rp ' + formatRupiah(item.harga)"></p>
+                                        <p class="font-medium text-white text-sm" x-text="item.nama"></p>
+                                        <p class="text-xs text-slate-500 mt-0.5" x-text="item.qty + ' × Rp ' + formatRupiah(item.harga)"></p>
                                     </div>
-                                    <span class="font-semibold text-gray-900 text-sm ml-4" x-text="'Rp ' + formatRupiah(item.harga * item.qty)"></span>
+                                    <span class="font-semibold text-white text-sm ml-4" x-text="'Rp ' + formatRupiah(item.harga * item.qty)"></span>
                                 </div>
                             </template>
                         </div>
                         
                         {{-- Total Section --}}
-                        <div class="px-6 py-4 bg-gradient-to-br from-gray-50 to-indigo-50 border-t border-gray-100">
+                        <div class="px-6 py-4 bg-white/5 border-t border-white/10">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-gray-500">Subtotal</span>
-                                <span class="font-medium text-gray-900" x-text="'Rp ' + formatRupiah(getTotal())"></span>
+                                <span class="text-slate-400">Subtotal</span>
+                                <span class="font-medium text-white" x-text="'Rp ' + formatRupiah(getSubtotal())"></span>
                             </div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-gray-500">Biaya Layanan</span>
-                                <span class="font-medium text-green-600">Gratis</span>
-                            </div>
-                            <div class="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent my-3"></div>
+                            <template x-if="pajakPersen > 0">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-slate-400">
+                                        Pajak (<span x-text="pajakPersen"></span>%)
+                                    </span>
+                                    <span class="font-medium text-amber-400" x-text="'+ Rp ' + formatRupiah(getPajak())"></span>
+                                </div>
+                            </template>
+                            <div class="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent my-3"></div>
                             <div class="flex items-center justify-between">
-                                <span class="font-bold text-gray-900 text-lg">Total Bayar</span>
-                                <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent" 
+                                <span class="font-bold text-white text-lg">Total Bayar</span>
+                                <span class="text-2xl font-bold text-orange-400" 
                                       x-text="'Rp ' + formatRupiah(getTotal())"></span>
                             </div>
                         </div>
                         
+                        {{-- Saldo Info --}}
+                        <div class="px-6 py-4 border-t border-white/10">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-slate-400 text-sm">Saldo Anda</span>
+                                <span class="font-bold text-white">Rp {{ number_format(auth()->user()->saldo ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                            @if((auth()->user()->saldo ?? 0) < 1)
+                                <div class="glass bg-red-500/10 border-red-500/30 rounded-xl p-3 mb-4">
+                                    <p class="text-red-400 text-sm flex items-center">
+                                        <i class="fas fa-exclamation-circle mr-2"></i>
+                                        Saldo tidak mencukupi
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+                        
                         {{-- Action Button --}}
-                        <div class="p-6 bg-white border-t border-gray-100">
+                        <div class="p-6 bg-white/5 border-t border-white/10">
                             <button 
                                 @click="submitOrder()"
                                 :disabled="loading"
-                                class="w-full px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                                class="w-full px-6 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-0.5 flex items-center justify-center space-x-2">
                                 <template x-if="!loading">
                                     <span class="flex items-center space-x-2">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -339,7 +439,7 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
                                 </template>
                                 <template x-if="loading">
                                     <span class="flex items-center space-x-2">
-                                        <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
@@ -347,13 +447,6 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
                                     </span>
                                 </template>
                             </button>
-                            
-                            <div class="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-400">
-                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                                </svg>
-                                <span>Pesanan aman & terverifikasi</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -361,18 +454,14 @@ Form akan mengirim data ke OrderController@store untuk memproses pesanan.
         </template>
     </div>
 </div>
-</div>
 
+@push('styles')
 <style>
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
+    .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 </style>
+@endpush
 @endsection

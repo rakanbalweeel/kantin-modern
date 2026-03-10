@@ -20,6 +20,8 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\User;
+use App\Models\Withdrawal;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -240,5 +242,95 @@ class AdminController extends Controller
             ->paginate(15);
 
         return view('admin.stock.index', compact('products'));
+    }
+
+    /**
+     * Kelola Penarikan Tunai
+     * GET /admin/withdrawals
+     */
+    public function withdrawals(Request $request)
+    {
+        $query = Withdrawal::with(['user', 'approver']);
+
+        // Filter status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter tanggal
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        // Pencarian
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('kode_withdrawal', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $withdrawals = $query->latest()->paginate(15);
+
+        // Summary stats
+        $stats = [
+            'pending' => Withdrawal::status('pending')->sum('jumlah'),
+            'pending_count' => Withdrawal::status('pending')->count(),
+            'approved_this_month' => Withdrawal::status('approved')
+                ->whereMonth('approved_at', now()->month)
+                ->sum('jumlah'),
+            'total_pajak_collected' => Withdrawal::status('approved')->sum('pajak_nominal'),
+        ];
+
+        return view('admin.withdrawals.index', compact('withdrawals', 'stats'));
+    }
+
+    /**
+     * Approve penarikan
+     * PATCH /admin/withdrawals/{withdrawal}/approve
+     */
+    public function approveWithdrawal(Request $request, Withdrawal $withdrawal)
+    {
+        if ($withdrawal->status !== 'pending') {
+            return back()->with('error', 'Penarikan ini sudah diproses sebelumnya.');
+        }
+
+        $withdrawal->approve(auth()->id(), $request->catatan);
+
+        return back()->with('success', "Penarikan {$withdrawal->kode_withdrawal} berhasil disetujui. Pajak Rp " . number_format($withdrawal->pajak_nominal, 0, ',', '.') . " masuk ke kas admin.");
+    }
+
+    /**
+     * Reject penarikan
+     * PATCH /admin/withdrawals/{withdrawal}/reject
+     */
+    public function rejectWithdrawal(Request $request, Withdrawal $withdrawal)
+    {
+        $request->validate([
+            'catatan' => 'required|string|max:500',
+        ], [
+            'catatan.required' => 'Alasan penolakan wajib diisi.',
+        ]);
+
+        if ($withdrawal->status !== 'pending') {
+            return back()->with('error', 'Penarikan ini sudah diproses sebelumnya.');
+        }
+
+        $withdrawal->reject(auth()->id(), $request->catatan);
+
+        return back()->with('success', "Penarikan {$withdrawal->kode_withdrawal} ditolak.");
+    }
+
+    /**
+     * Detail penarikan
+     * GET /admin/withdrawals/{withdrawal}
+     */
+    public function showWithdrawal(Withdrawal $withdrawal)
+    {
+        $withdrawal->load(['user', 'approver']);
+        return view('admin.withdrawals.show', compact('withdrawal'));
     }
 }
