@@ -96,7 +96,15 @@ class AdminController extends Controller
 
         $orders = $query->latest()->paginate(15);
 
-        return view('admin.orders.index', compact('orders'));
+        // Stats untuk dashboard
+        $stats = [
+            'pending' => Order::where('status', 'pending')->count(),
+            'diproses' => Order::where('status', 'diproses')->count(),
+            'selesai' => Order::where('status', 'selesai')->count(),
+            'batal' => Order::where('status', 'batal')->count(),
+        ];
+
+        return view('admin.orders.index', compact('orders', 'stats'));
     }
 
     /**
@@ -206,19 +214,28 @@ class AdminController extends Controller
             ->get();
 
         // Penjualan per kategori
-        $categoryStats = DB::table('order_details')
+        $salesByCategory = DB::table('order_details')
             ->join('products', 'order_details.product_id', '=', 'products.id')
             ->join('categories', 'products.category_id', '=', 'categories.id')
             ->join('orders', 'order_details.order_id', '=', 'orders.id')
             ->where('orders.status', 'selesai')
             ->whereBetween('orders.created_at', [$startDate, $endDate . ' 23:59:59'])
             ->select(
-                'categories.nama',
+                'categories.nama as category_name',
+                DB::raw('SUM(order_details.jumlah) as total_sold'),
                 DB::raw('SUM(order_details.subtotal) as total_revenue')
             )
             ->groupBy('categories.id', 'categories.nama')
             ->orderByDesc('total_revenue')
             ->get();
+
+        // Total Pajak (jika ada kolom pajak)
+        $totalTax = Order::betweenDates($startDate, $endDate)
+            ->where('status', 'selesai')
+            ->sum('pajak_nominal');
+
+        // Rata-rata per transaksi
+        $averageTransaction = $totalTransactions > 0 ? $totalSales / $totalTransactions : 0;
 
         return view('admin.reports.sales', compact(
             'startDate',
@@ -227,7 +244,9 @@ class AdminController extends Controller
             'totalTransactions',
             'topProducts',
             'dailySales',
-            'categoryStats'
+            'salesByCategory',
+            'totalTax',
+            'averageTransaction'
         ));
     }
 

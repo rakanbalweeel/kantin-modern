@@ -129,7 +129,7 @@ DETAIL PESANAN / STRUK - SISWA (DARK THEME)
                 </h3>
                 
                 <div class="space-y-4">
-                    @foreach($order->details as $detail)
+                    @foreach($order->orderDetails as $detail)
                         <div class="flex items-center justify-between py-3 border-b border-slate-700/50 last:border-b-0">
                             <div class="flex items-center">
                                 <div class="w-12 h-12 bg-gradient-to-br from-orange-500/20 to-amber-500/20 rounded-xl flex items-center justify-center mr-4">

@@ -1,17 +1,13 @@
-{{--
-==========================================================================
-SISWA - SALDO VIRTUAL - DARK THEME
-==========================================================================
---}}
 
-@extends('layouts.app')
 
-@section('title', 'Saldo Virtual')
 
-@section('content')
+
+<?php $__env->startSection('title', 'Saldo Virtual'); ?>
+
+<?php $__env->startSection('content'); ?>
 <div class="min-h-screen hero-gradient py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Header --}}
+        
         <div class="mb-8 text-center">
             <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-4">
                 <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -23,25 +19,27 @@ SISWA - SALDO VIRTUAL - DARK THEME
             <p class="mt-2 text-slate-400">Kelola saldo virtual kamu di sini</p>
         </div>
 
-        {{-- Alert Messages --}}
-        @if(session('success'))
+        
+        <?php if(session('success')): ?>
             <div class="mb-6 glass-card border-l-4 border-emerald-500 text-emerald-400 px-4 py-3 rounded-xl flex items-center">
                 <i class="fas fa-check-circle mr-3"></i>
-                {{ session('success') }}
-            </div>
-        @endif
+                <?php echo e(session('success')); ?>
 
-        @if(session('error'))
+            </div>
+        <?php endif; ?>
+
+        <?php if(session('error')): ?>
             <div class="mb-6 glass-card border-l-4 border-red-500 text-red-400 px-4 py-3 rounded-xl flex items-center">
                 <i class="fas fa-exclamation-circle mr-3"></i>
-                {{ session('error') }}
-            </div>
-        @endif
+                <?php echo e(session('error')); ?>
 
-        {{-- Saldo Card --}}
+            </div>
+        <?php endif; ?>
+
+        
         <div class="relative overflow-hidden bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 rounded-3xl shadow-2xl shadow-orange-500/20 p-8 text-white mb-8"
              x-data="{ showTopup: false, topupAmount: '', topupPresets: [25000, 50000, 100000, 200000] }">
-            {{-- Background Pattern --}}
+            
             <div class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
             <div class="absolute bottom-0 left-0 -mb-8 -ml-8 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
             
@@ -52,7 +50,7 @@ SISWA - SALDO VIRTUAL - DARK THEME
                     </div>
                     <div>
                         <p class="text-white/70 text-sm font-medium mb-1">Saldo Virtual Kamu</p>
-                        <h2 class="text-4xl font-bold tracking-tight">Rp {{ number_format($user->saldo ?? 0, 0, ',', '.') }}</h2>
+                        <h2 class="text-4xl font-bold tracking-tight">Rp <?php echo e(number_format($user->saldo ?? 0, 0, ',', '.')); ?></h2>
                     </div>
                 </div>
                 <button @click="showTopup = !showTopup" 
@@ -62,13 +60,13 @@ SISWA - SALDO VIRTUAL - DARK THEME
                 </button>
             </div>
 
-            {{-- Top Up Form --}}
+            
             <div x-show="showTopup" x-collapse class="mt-6 pt-6 border-t border-white/20">
-                <form action="{{ route('siswa.saldo.topup') }}" method="POST">
-                    @csrf
+                <form action="<?php echo e(route('siswa.saldo.topup')); ?>" method="POST">
+                    <?php echo csrf_field(); ?>
                     <p class="text-white/80 text-sm mb-4">Pilih atau masukkan nominal top up:</p>
                     
-                    {{-- Preset Amounts --}}
+                    
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                         <template x-for="preset in topupPresets" :key="preset">
                             <button type="button" 
@@ -80,7 +78,7 @@ SISWA - SALDO VIRTUAL - DARK THEME
                         </template>
                     </div>
 
-                    {{-- Custom Amount --}}
+                    
                     <div class="relative mb-4">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700 font-medium">Rp</span>
                         <input type="number" name="jumlah" x-model="topupAmount" 
@@ -98,7 +96,7 @@ SISWA - SALDO VIRTUAL - DARK THEME
             </div>
         </div>
 
-        {{-- Info Cards --}}
+        
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div class="glass-card rounded-2xl p-6">
                 <h3 class="font-bold text-white mb-4 flex items-center">
@@ -153,7 +151,7 @@ SISWA - SALDO VIRTUAL - DARK THEME
             </div>
         </div>
 
-        {{-- Riwayat Top Up --}}
+        
         <div class="glass-card rounded-2xl overflow-hidden">
             <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
                 <h3 class="font-bold text-white flex items-center">
@@ -161,41 +159,44 @@ SISWA - SALDO VIRTUAL - DARK THEME
                 </h3>
             </div>
             <div class="divide-y divide-slate-700/50">
-                @forelse($riwayatTopup ?? [] as $request)
-                    @php
+                <?php $__empty_1 = true; $__currentLoopData = $riwayatTopup ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $request): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                    <?php
                         $statusConfig = [
                             'pending' => ['bg' => 'bg-yellow-500/20', 'text' => 'text-yellow-400', 'icon' => 'fa-clock'],
                             'approved' => ['bg' => 'bg-emerald-500/20', 'text' => 'text-emerald-400', 'icon' => 'fa-check-circle'],
                             'rejected' => ['bg' => 'bg-red-500/20', 'text' => 'text-red-400', 'icon' => 'fa-times-circle'],
                         ];
                         $config = $statusConfig[$request->status] ?? $statusConfig['pending'];
-                    @endphp
+                    ?>
                     <div class="p-4 hover:bg-white/5 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center">
-                                <div class="w-10 h-10 {{ $config['bg'] }} rounded-xl flex items-center justify-center mr-4">
-                                    <i class="fas {{ $config['icon'] }} {{ $config['text'] }}"></i>
+                                <div class="w-10 h-10 <?php echo e($config['bg']); ?> rounded-xl flex items-center justify-center mr-4">
+                                    <i class="fas <?php echo e($config['icon']); ?> <?php echo e($config['text']); ?>"></i>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-orange-400">Rp {{ number_format($request->jumlah, 0, ',', '.') }}</p>
-                                    <p class="text-sm text-slate-500">{{ \Carbon\Carbon::parse($request->created_at)->locale('id')->isoFormat('D MMM Y, HH:mm') }}</p>
+                                    <p class="font-bold text-orange-400">Rp <?php echo e(number_format($request->jumlah, 0, ',', '.')); ?></p>
+                                    <p class="text-sm text-slate-500"><?php echo e(\Carbon\Carbon::parse($request->created_at)->locale('id')->isoFormat('D MMM Y, HH:mm')); ?></p>
                                 </div>
                             </div>
-                            <span class="px-3 py-1 {{ $config['bg'] }} {{ $config['text'] }} rounded-lg text-sm font-medium">
-                                {{ ucfirst($request->status) }}
+                            <span class="px-3 py-1 <?php echo e($config['bg']); ?> <?php echo e($config['text']); ?> rounded-lg text-sm font-medium">
+                                <?php echo e(ucfirst($request->status)); ?>
+
                             </span>
                         </div>
                     </div>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <div class="p-8 text-center">
                         <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-inbox text-2xl text-slate-600"></i>
                         </div>
                         <p class="text-slate-400">Belum ada permintaan top up</p>
                     </div>
-                @endforelse
+                <?php endif; ?>
             </div>
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\laragon\www\kantin-modern\resources\views/siswa/saldo/index.blade.php ENDPATH**/ ?>
